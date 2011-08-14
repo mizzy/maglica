@@ -1,0 +1,4 @@
+{
+  "hosts" : [ "host0.example.com", "host1.example.com" ]
+}
+

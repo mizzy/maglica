@@ -1,10 +1,10 @@
 import sys
 import maglica.config
-import maglica.images
+import maglica.image
 
 def run_command(args):
     handlers = {
-        'list': maglica.images.list
+        'list': maglica.image.list
         }
 
     cmd = args.pop(0)

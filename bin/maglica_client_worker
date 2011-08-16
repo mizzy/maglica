@@ -1,0 +1,6 @@
+#!/usr/bin/python
+
+import maglica.client_worker
+
+if __name__ == '__main__':
+    maglica.client_worker.main()

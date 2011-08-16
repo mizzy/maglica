@@ -3,14 +3,9 @@ import maglica.config
 import maglica.image
 
 def run_command(args):
-    handlers = {
-        'list': maglica.image.list
-        }
-
-    cmd = args.pop(0)
-
-    if cmd not in handlers:
-        return
+    target = args.pop(0)
+    method = args.pop(0)
+    cmd = eval("maglica." + target + "." + method)
 
     if len(args) > 0:
         options = {}
@@ -25,10 +20,10 @@ def run_command(args):
             print key
             print value
             options[key] = value
-        handlers[cmd](options)
+        cmd(options)
     else:
-        handlers[cmd]()
-    
+        cmd()
+
 def main():
     cfg = maglica.config.load()
     args = sys.argv[1:]

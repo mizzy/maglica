@@ -1,0 +1,11 @@
+#!/usr/bin/python
+
+import maglica.host_worker.dispatcher
+from optparse import OptionParser
+
+if __name__ == '__main__':
+    parser = OptionParser()
+    parser.add_option("-c", "--client", dest="client",
+                  help="Host that client worker working on")
+    (options, args) = parser.parse_args()
+    maglica.host_worker.dispatcher.main(options.client)

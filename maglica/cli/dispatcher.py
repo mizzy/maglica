@@ -1,12 +1,13 @@
 import sys
 import maglica.config
-import maglica.image
+import maglica.cli.image
+import maglica.cli.vm
 
 def run_command(args):
     target = args.pop(0)
     method = args.pop(0)
-    cmd = eval("maglica." + target + "." + method)
-
+    cmd = eval("maglica.cli." + target + "." + method)
+    
     if len(args) > 0:
         options = {}
         for arg in args:
@@ -17,8 +18,6 @@ def run_command(args):
                 value = True
                 
             key = key.replace('--', '')
-            print key
-            print value
             options[key] = value
         cmd(options)
     else:

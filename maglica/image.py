@@ -4,8 +4,6 @@ import re
 
 # Listing up "original" images
 def list():
-    print "Name                                     Host"
-    print "---------------------------------------------------------"
     config = maglica.config.load()
     images = []
     for host in config.hosts:
@@ -13,7 +11,11 @@ def list():
         domains = conn.listDefinedDomains()
         for domain in domains:
             if re.match(r'.+[\.\-\_]original$', domain):
-                print "%-40s %-30s" % ( domain, host )
+                images.append({
+                    "name" : domain,
+                    "host" : host,
+                    })
+    return images
 
 def copy(args):
     pass

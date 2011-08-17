@@ -3,7 +3,7 @@ import socket
 import maglica.host_worker.vm
 import json
 import logging
-logging.getLogger().setLevel(logging.DEBUG)
+logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s')
 
 def main(client):
     context = zmq.Context()

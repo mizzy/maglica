@@ -1,6 +1,7 @@
 = Overview =
 
-Maglica is a Python library and command-line tool for an internal cloud. (This tool is primitive beta now.)
+Maglica is a Python library and command-line tool for an internal cloud. 
+(This tool is primitive beta now.)
 
 This is very simple and based on libvirt, virt-clone and zeromq (for RPC).
 
@@ -67,4 +68,5 @@ Run maclica command to clone a virtual machine image.
 
  $ maglica vm clone --image=SL6.1-x86_64.original --hostname=vm0.example.jp
 
-This command clones the image and rewrites network setting of the image with libguestfs.
+This command clones the image and rewrites network setting of the image
+with libguestfs.

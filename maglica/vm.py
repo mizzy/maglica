@@ -1,7 +1,7 @@
 import maglica.dispatcher
 import maglica.image
 
-def create(args): 
+def clone(args): 
     images = maglica.image.list()
     host = ""
     for image in images:
@@ -10,7 +10,7 @@ def create(args):
 
     maglica.dispatcher.dispatch({
         "target" : "vm",
-        "method" : "create",
+        "method" : "clone",
         "host"   : host,
         "args"   : args,
         })

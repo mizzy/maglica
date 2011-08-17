@@ -7,10 +7,10 @@ def main():
     context = zmq.Context()
 
     publisher = context.socket(zmq.PUB)
-    publisher.bind("tcp://0.0.0.0:5555")
+    publisher.bind("tcp://*:5555")
 
     replier = context.socket(zmq.REP)
-    replier.bind("tcp://0.0.0.0:5556")
+    replier.bind("tcp://*:5556")
 
     while True:
         message = replier.recv()

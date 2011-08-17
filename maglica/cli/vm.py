@@ -1,5 +1,5 @@
 import maglica.vm
 
-def create(args):
-    maglica.vm.create(args)
+def clone(args):
+    maglica.vm.clone(args)
     

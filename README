@@ -69,7 +69,7 @@ the string "oroginal").
 
 Run maclica command to clone a virtual machine image.
 
- $ maglica vm clone --image=SL6.1-x86_64.original --hostname=vm0.example.jp
+ $ PYTHONPATH=. ./maglica vm clone --image=SL6.1-x86_64.original --hostname=vm0.example.jp
 
-This command clones the image and rewrites network setting of the image
-with libguestfs.
+This command clones the image on a host and rewrites network setting of
+the image with libguestfs.

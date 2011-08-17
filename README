@@ -7,6 +7,8 @@ This is very simple and based on libvirt, virt-clone and zeromq (for RPC).
 
 The name "Maglica" is derived from a Bosnian word that means "Nebula."
 
+= Architecture of Maglica =
+
 Maglica has four components.
 
  1. Library
@@ -15,7 +17,8 @@ Maglica has four components.
  4. Host workers
 
 Maglica library is a main component of Maglica.Maglica CLI calls the library
-to do the jobs.
+to do the jobs.The library talks to libvirtd on other hosts directly to get
+virtual machines information.
 
 Maglica client worker is running on the same host which cli runs.
 Client worker binds zeromq PUB socket to tcp://*:5555 and REP socket

@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
 import maglica.client_worker
+import logging
+logging.getLogger().setLevel(logging.DEBUG)
+logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s')
 
 if __name__ == '__main__':
     maglica.client_worker.main()

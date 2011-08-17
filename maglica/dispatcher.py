@@ -1,7 +1,6 @@
 import zmq
 import json
 import logging
-logging.getLogger().setLevel(logging.DEBUG)
 
 context = zmq.Context()
 

@@ -3,7 +3,7 @@ import socket
 import guestfs
 import re
 
-def create(args):
+def clone(args):
     image      = args["image"]
     hostname   = args["hostname"]
     image_file = "/var/lib/libvirt/images/" + hostname + ".img"
@@ -36,7 +36,8 @@ DHCP_HOSTNAME=%s
 '''
 
     network='''NETWORKING=yes
-HOSTNAME=%s'''
+HOSTNAME=%s
+'''
 
     ifcfg0  = ifcfg % ('eth0', hostname)
     network = network % ( hostname )

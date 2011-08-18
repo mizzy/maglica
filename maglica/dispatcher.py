@@ -4,7 +4,7 @@ import logging
 import maglica.config
 
 cfg = maglica.config.load()
-rep_port = 5556
+rep_port = "5556"
 if cfg.client.has_key("rep_port"):
     rep_port = cfg.client["rep_port"]
 

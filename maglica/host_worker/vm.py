@@ -19,11 +19,11 @@ def clone(args):
     subprocess.call(cmdline)
 
     g = guestfs.GuestFS()
-    g.add_drive('/var/lib/libvirt/images/test.mizzy.org.img')
+    g.add_drive('/var/lib/libvirt/images/' + hostname + '.img')
     g.launch()
     filesystems = g.list_filesystems()
     for filesystem in filesystems:
-        if re.match(r'.+root$', filesystem[0]):
+        if re.match(r'.+root$', filesystem[0]) or re.match(r'.+LogVol00$', filesystem[0]):
             fs = filesystem[0]
 
     g.mount(fs, '/')

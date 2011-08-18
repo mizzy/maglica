@@ -54,12 +54,12 @@ Clone Maglica on a client machine.
 
 Run the client worker.
 
- $ PYTHONPATH=. ./bin/maglica_client_worker
+ $ PYTHONPATH=. ./scripts/maglica_client_worker
 
 Run maglica command to list up "original images"(which name is end with
 the string "oroginal").
 
- $ PYTHONPATH=. ./bin/maglica image list
+ $ PYTHONPATH=. ./scripts/maglica image list
  Name                                     Host
  ---------------------------------------------------------
  SL6.0-x86_64.original                    host0.example.jp  

@@ -41,8 +41,12 @@ tcp port. (See http://libvirt.org/remote.html)
 Clone Maglica on a host machine and run the host worker.
 
  $ git clone git://github.com/mizzy/maglica.git
- $ cd maglic
- $ PYTHONPATH=. ./bin/maglica_host_worker --client=client.example.jp
+ $ cd maglica
+ $ cp etc/maglica.conf.example etc/maglica.conf
+
+Edit etc/maglica.conf that points to the correct client worker host and port.
+
+ $ ./scripts/maglica_host_worker --client=client.example.jp
 
 Clone Maglica on a client machine.
 
@@ -50,16 +54,16 @@ Clone Maglica on a client machine.
  $ cd maglica
  $ cp etc/maglica.conf.example etc/maglica.conf
 
- Edit etc/maglica.conf that points to host machines.
+Edit etc/maglica.conf that points to host machines.
 
 Run the client worker.
 
- $ PYTHONPATH=. ./scripts/maglica_client_worker
+ $ ./scripts/maglica_client_worker
 
 Run maglica command to list up "original images"(which name is end with
 the string "oroginal").
 
- $ PYTHONPATH=. ./scripts/maglica image list
+ $ ./scripts/maglica image list
  Name                                     Host
  ---------------------------------------------------------
  SL6.0-x86_64.original                    host0.example.jp  

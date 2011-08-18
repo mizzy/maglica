@@ -1,4 +1,9 @@
 {
-  "hosts" : [ "host0.example.com", "host1.example.com" ]
+  "hosts"  : [ "host0.example.com", "host1.example.com" ],
+  "client" : {
+      "host"     : "client.example.com",
+      "pub_port" : "5555",
+      "rep_port" : "5556"
+  } 
 }
 

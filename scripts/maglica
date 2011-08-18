@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+import sys
+sys.path.insert(0, '.')
+
 import maglica.cli.dispatcher
 import logging
 logging.getLogger().setLevel(logging.DEBUG)

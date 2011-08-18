@@ -46,7 +46,7 @@ Clone Maglica on a host machine and run the host worker.
 
 Edit etc/maglica.conf that points to the correct client worker host and port.
 
- $ ./scripts/maglica_host_worker --client=client.example.jp
+ $ ./scripts/maglica_host_worker
 
 Clone Maglica on a client machine.
 
@@ -73,7 +73,7 @@ the string "oroginal").
 
 Run maclica command to clone a virtual machine image.
 
- $ PYTHONPATH=. ./maglica vm clone --image=SL6.1-x86_64.original --hostname=vm0.example.jp
+ $ ./scripts/maglica vm clone --image=SL6.1-x86_64.original --hostname=vm0.example.jp
 
 This command clones the image on a host and rewrites network setting of
 the image with libguestfs.

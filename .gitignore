@@ -1,3 +1,6 @@
 *.pyc
 etc/maglica.conf
 .#*
+Maglica.egg-info/
+build/
+dist/

@@ -23,7 +23,7 @@ def main():
     subscriber.setsockopt(zmq.SUBSCRIBE, socket.gethostname())
     
     requestor = context.socket(zmq.REQ)
-    requestor.connect(str("tcp://" + str(cfg.client["host"]) + ":" + rep_port))
+    requestor.connect(str("tcp://" + cfg.client["host"] + ":" + rep_port))
 
     while True:
         [address, args] = subscriber.recv_multipart()

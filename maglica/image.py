@@ -2,7 +2,7 @@ import libvirt
 import maglica.config
 import re
 
-# Listing up "original" images
+# Listing up inactive images
 def list():
     config = maglica.config.load()
     images = []
@@ -10,11 +10,10 @@ def list():
         conn = libvirt.open('remote://' + host)
         domains = conn.listDefinedDomains()
         for domain in domains:
-            if re.match(r'.+[\.\-\_]original$', domain):
-                images.append({
-                    "name" : domain,
-                    "host" : host,
-                    })
+            images.append({
+                "name" : domain,
+                "host" : host,
+                })
     return images
 
 def copy(args):

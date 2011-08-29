@@ -28,7 +28,7 @@ def main():
     while True:
         [address, args] = subscriber.recv_multipart()
         args = json.loads(args)
-        cmd = eval("maglica.host_worker." + args["target"] + "." + args["method"])
+        cmd = eval("maglica.host_worker." + args["type"] + "." + args["action"])
         ret = cmd(args["args"])
         requestor.send( json.dumps({ "message" : ret }) )
         logging.info(requestor.recv())

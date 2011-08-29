@@ -17,5 +17,15 @@ def list():
     return images
 
 def copy(args):
-    pass
+    name    = args["name"]
+    to_host = args["to"]
+
+    images = list()
+
+    for image in images:
+        if image["name"] == name:
+            from_host = image["host"]
+            break
+
+    print from_host
 

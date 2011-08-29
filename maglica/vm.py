@@ -12,8 +12,8 @@ def clone(args):
             host = image["host"]
 
     maglica.dispatcher.dispatch({
-        "target" : "vm",
-        "method" : "clone",
+        "type"   : "vm",
+        "action" : "clone",
         "host"   : host,
         "args"   : args,
         })

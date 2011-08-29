@@ -4,6 +4,10 @@ def clone(args):
     maglica.vm.clone(args)
     
 def list():
+    required_params = "".split(' ')
+    optional_params = "".split(' ')
+    
+
     print "Name                               Host                 State"
     print "------------------------------------------------------------------------"
 

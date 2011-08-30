@@ -1,6 +1,8 @@
 import libvirt
 import maglica.config
 import re
+from xml.etree.ElementTree import *
+import maglica.dispatcher
 
 # Listing up inactive images
 def list():
@@ -17,15 +19,9 @@ def list():
     return images
 
 def copy(args):
-    name    = args["name"]
-    to_host = args["to"]
-
-    images = list()
-
-    for image in images:
-        if image["name"] == name:
-            from_host = image["host"]
-            break
-
-    print from_host
-
+    maglica.dispatcher.dispatch({
+        "type"   : "image",
+        "action" : "copy",
+        "name"   : args["name"],
+        "dest"   : args["dest"],
+    })

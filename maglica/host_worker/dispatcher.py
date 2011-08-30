@@ -2,8 +2,6 @@ import zmq
 import socket
 import maglica.host_worker.vm
 import json
-import logging
-logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s')
 import maglica.config
 
 def main():

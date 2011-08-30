@@ -1,7 +1,7 @@
 import zmq
 import json
-import logging
 import maglica.config
+import logging
 
 def main():
     context = zmq.Context()
@@ -23,16 +23,20 @@ def main():
 
     while True:
         message = replier.recv()
-        
         logging.info(message)
-
+        
         args = json.loads(message)
-
+        
         if args.has_key("host"):
             host = args["host"]
             publisher.send_multipart([
                 str(host),
                 json.dumps(args),
-                ])
-        
-        replier.send('OK')
+            ])
+        elif args.has_key("type") and args["type"] == "image" and args["action"] == "copy": 
+            publisher.send_multipart([
+                'copy',
+                json.dumps(args),
+            ])
+
+        replier.send("OK")

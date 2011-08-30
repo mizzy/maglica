@@ -11,12 +11,15 @@ def clone(args):
         if args["image"] == image["name"]:
             host = image["host"]
 
+    if not host:
+        raise Exception('Image "%s" is active or not exist.' % args["image"])
+    
     maglica.dispatcher.dispatch({
         "type"   : "vm",
         "action" : "clone",
         "host"   : host,
         "args"   : args,
-        })
+    })
 
 def list():
     vms = []

@@ -22,3 +22,7 @@ def start(args):
 def stop(args):
     maglica.vm.stop(args)
     print "%s is being shutdown" % ( args["name"] )
+
+def remove(args):
+    maglica.vm.remove(args)
+    print "%s is removed" % ( args["name"] )

@@ -5,6 +5,7 @@ import re
 import libvirt
 from xml.etree.ElementTree import *
 import logging
+import os
 
 def clone(args):
     image      = args["image"]
@@ -68,6 +69,9 @@ HOSTNAME=%s
     g.sync()
     g.umount_all()
 
+    dom = conn.lookupByName(hostname)
+    dom.create()
+    
     if status == 1:
         message = "Created %s successfully on %s" % ( image, hostname )
     return {
@@ -75,3 +79,22 @@ HOSTNAME=%s
         "status" : status,
     }
 
+
+def remove(args):
+    conn = libvirt.open(None)
+    dom  = conn.lookupByName(args["name"])
+    desc = fromstring(dom.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
+
+    for disk in desc.findall(".//disk"):
+        if disk.get("device") == "disk":
+            file = disk.find(".//source").get("file")
+            print file
+            os.remove(file)
+
+    dom.undefine()
+
+
+    return {
+        "message" : "%s removed successfully" % args["name"],
+        "status"  : 1,
+    }

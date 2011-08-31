@@ -3,7 +3,6 @@ import maglica.config
 import json
 import logging
 import libvirt
-import maglica.util
 import subprocess 
 from xml.etree.ElementTree import *
 
@@ -35,6 +34,22 @@ def main():
         name = args["name"]
         dest = args["dest"]
 
+        conn = libvirt.open('remote://' + dest)
+        domain_found = 1
+        try:
+            conn.lookupByName(name)
+        except:
+            domain_found = 0
+
+        if domain_found:
+            requestor.send(json.dumps({
+                "message"    : "%s already exsits on %s" % ( name, dest),
+                "status"     : 2,
+                "request_id" : args["request_id"],
+                }))
+            res = requestor.recv()
+            break
+        
         src = None
         config = maglica.config.load()
         for host in config.hosts:

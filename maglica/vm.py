@@ -3,21 +3,24 @@ import maglica.image
 import libvirt
 import maglica.config
 import re
+import random
+import sys
 
 def clone(args): 
     images = maglica.image.list()
-    host = ""
+    hosts = []
+    
     for image in images:
         if args["image"] == image["name"]:
-            host = image["host"]
+            hosts.append(image["host"])
 
-    if not host:
+    if len(hosts) < 1:
         raise Exception('Image "%s" is active or not exist.' % args["image"])
     
     maglica.dispatcher.dispatch({
         "type"   : "vm",
         "action" : "clone",
-        "host"   : host,
+        "host"   : hosts[random.randint(0, len(hosts) - 1)],
         "args"   : args,
     })
 
@@ -36,6 +39,25 @@ def start(args):
 def stop(args):
     dom = get_active_domain(args["name"])
     dom.shutdown()
+
+def remove(args):
+    name = args["name"]
+    dom = get_inactive_domain(name)
+
+    if not dom:
+        dom = get_active_domain(name)
+        if dom:
+            raise Exception("Active domain cannot be removed.Please stop it.")
+        else:
+            raise Exception("Domain not found.")
+
+    maglica.dispatcher.dispatch({
+        "type"   : "vm",
+        "host"   : dom["host"],
+        "action" : "remove",
+        "args"   : args,
+    })
+
 
 def get_active_domains():
     config = maglica.config.load()
@@ -78,9 +100,8 @@ def get_active_domain(name):
                 return dom
 
 def get_inactive_domain(name):
-    config = maglica.config.load()
-    for host in config.hosts:
-        conn = libvirt.open('remote://' + host)
-        dom = conn.lookupByName(name)
-        if dom:
-            return dom
+    domains = get_inactive_domains()
+    for domain in domains:
+        if name == domain["name"]:
+            return domain
+

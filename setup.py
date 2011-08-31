@@ -6,6 +6,7 @@ setup(
     scripts = [
       'scripts/maglica',
       'scripts/maglica_client_worker',
+      'scripts/maglica_copy_worker',
       'scripts/maglica_host_worker',
     ],
     author = "Gosuke Miyashita",

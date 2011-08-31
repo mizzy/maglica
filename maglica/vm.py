@@ -51,7 +51,7 @@ def remove(args):
         else:
             raise Exception("Domain not found.")
 
-    maglica.dispatcher.dispatch({
+    maglca.dispatcher.dispatch({
         "type"   : "vm",
         "host"   : dom["host"],
         "action" : "remove",
@@ -81,12 +81,11 @@ def get_inactive_domains():
         conn = libvirt.open('remote://' + host)
         domains = conn.listDefinedDomains()
         for domain in domains:
-            if not re.match(r'.+[\.\-\_]original$', domain):
-                vms.append({
-                    "name"  : domain,
-                    "state" : "shut off",
-                    "host"  : host,
-                    })
+            vms.append({
+                "name"  : domain,
+                "state" : "shut off",
+                "host"  : host,
+            })
     return vms
 
 def get_active_domain(name):

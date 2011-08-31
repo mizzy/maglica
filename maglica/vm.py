@@ -51,7 +51,7 @@ def remove(args):
         else:
             raise Exception("Domain not found.")
 
-    maglca.dispatcher.dispatch({
+    maglica.dispatcher.dispatch({
         "type"   : "vm",
         "host"   : dom["host"],
         "action" : "remove",

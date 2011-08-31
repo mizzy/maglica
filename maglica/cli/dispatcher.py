@@ -4,6 +4,7 @@ import maglica.config
 import maglica.cli
 import maglica.cli.image
 import maglica.cli.vm
+import maglica.cli.log
 
 OBJECT_TYPES = filter(
     lambda x: not re.match(r"^__", x) and x != 'dispatcher',

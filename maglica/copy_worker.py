@@ -26,6 +26,8 @@ def main():
     requestor = context.socket(zmq.REQ)
     requestor.connect(str("tcp://" + config.client["host"] + ":" + rep_port))
 
+    logging.info("copy worker started.")
+
     while True:
         [address, args] = subscriber.recv_multipart()
         args = json.loads(args)
@@ -69,17 +71,23 @@ def main():
                     'of=' + file,
                 ]
 
-                logging.info(' '.join(cmdline1))
-                logging.info(' '.join(cmdline2))
-
+                logging.info( "copying %s from %s to %s" % ( file, src, dest ) )
                 proc = subprocess.Popen(cmdline1, stdout=subprocess.PIPE)
                 subprocess.call(cmdline2, stdin=proc.stdout)
-                
+
         conn = libvirt.open('remote://' + dest)
         conn.defineXML(xml)        
-        
-        requestor.send( json.dumps({ "message" : "copy done" }) )
-        logging.info(requestor.recv())
+
+        message = "Done copying %s from %s to %s" % ( file, src, dest )
+        logging.info(message)
+        requestor.send(json.dumps({
+            "message"    : message,
+            "status"     : 1,
+            "request_id" : args["request_id"],
+        }))
+        res = requestor.recv()
+        if res:
+            logging.info(res)
 
     requestor.close()
     subscriber.close()

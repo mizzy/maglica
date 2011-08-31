@@ -3,6 +3,7 @@ import socket
 import maglica.host_worker.vm
 import json
 import maglica.config
+import logging
 
 def main():
     context = zmq.Context()
@@ -23,13 +24,20 @@ def main():
     requestor = context.socket(zmq.REQ)
     requestor.connect(str("tcp://" + cfg.client["host"] + ":" + rep_port))
 
+    logging.info("host worker started.")
+    
     while True:
         [address, args] = subscriber.recv_multipart()
+        logging.info(args)
         args = json.loads(args)
         cmd = eval("maglica.host_worker." + args["type"] + "." + args["action"])
         ret = cmd(args["args"])
-        requestor.send( json.dumps({ "message" : ret }) )
-        logging.info(requestor.recv())
+        ret["request_id"] = args["request_id"]
+        requestor.send(json.dumps(ret))
+
+        res = requestor.recv()
+        if res:
+            logging.info(res)
 
     requestor.close()
     subscriber.close()

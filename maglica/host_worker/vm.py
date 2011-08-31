@@ -4,6 +4,7 @@ import guestfs
 import re
 import libvirt
 from xml.etree.ElementTree import *
+import logging
 
 def clone(args):
     image      = args["image"]
@@ -28,8 +29,15 @@ def clone(args):
         "-f",
         image_file,
         ]
-    subprocess.call(cmdline)
-
+    proc = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = proc.communicate()
+    
+    message = None
+    status  = 1
+    if proc.returncode:
+        status = 2
+        message = stderr
+        
     g = guestfs.GuestFS()
     g.add_drive(image_file)
     g.launch()
@@ -60,4 +68,10 @@ HOSTNAME=%s
     g.sync()
     g.umount_all()
 
-    return "Created " + hostname + " successfully on " + socket.gethostname()
+    if status == 1:
+        message = "Created %s successfully on %s" % ( image, hostname )
+    return {
+        "message": message,
+        "status" : status,
+    }
+

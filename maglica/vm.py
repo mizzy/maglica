@@ -39,7 +39,7 @@ def start(args):
         dom  = conn.lookupByName(dom["name"])
         dom.create()
     else:
-        raise Exeption("%s not found." % args["name"])
+        raise Exception("%s not found." % args["name"])
 
 def stop(args):
     dom = get_active_domain(args["name"])

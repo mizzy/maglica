@@ -34,7 +34,12 @@ def list():
 
 def start(args):
     dom = get_inactive_domain(args["name"])
-    dom.create()
+    if dom:
+        conn = libvirt.open("remote://" + dom["host"])
+        dom  = conn.lookupByName(dom["name"])
+        dom.create()
+    else:
+        raise Exeption("%s not found." % args["name"])
 
 def stop(args):
     dom = get_active_domain(args["name"])

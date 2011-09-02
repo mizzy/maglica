@@ -44,28 +44,39 @@ def clone(args):
     g.launch()
     filesystems = g.list_filesystems()
     for filesystem in filesystems:
-        if re.match(r'.+root$', filesystem[0]) or re.match(r'.+LogVol00$', filesystem[0]):
+        if re.match(r'.+root$', filesystem[0]) or re.match(r'.+LogVol00$', filesystem[0]) or filesystem[0] == '/dev/vda1':
             fs = filesystem[0]
 
     g.mount(fs, '/')
 
-    ifcfg='''DEVICE=%s
+    ostype = None
+    if g.is_file('/etc/redhat-release'):
+        ostype = 'redhat'
+    elif g.is_file('/etc/debian_version'):
+        ostype = 'debian'
+
+    if ostype == 'redhat':
+        ifcfg='''DEVICE=%s
 BOOTPROTO=dhcp
 ONBOOT=yes
 TYPE="Ethernet"
 DHCP_HOSTNAME=%s
 '''
 
-    network='''NETWORKING=yes
+        network='''NETWORKING=yes
 HOSTNAME=%s
 '''
 
-    ifcfg0  = ifcfg % ('eth0', hostname)
-    network = network % ( hostname )
+        ifcfg0  = ifcfg % ('eth0', hostname)
+        network = network % ( hostname )
 
-    g.write_file('/etc/sysconfig/network-scripts/ifcfg-eth0', ifcfg0, 0)
-    g.write_file('/etc/sysconfig/network', network, 0)
-    g.write_file('/etc/udev/rules.d/70-persistent-net.rules', '', 0)
+        g.write_file('/etc/sysconfig/network-scripts/ifcfg-eth0', ifcfg0, 0)
+        g.write_file('/etc/sysconfig/network', network, 0)
+        g.write_file('/etc/udev/rules.d/70-persistent-net.rules', '', 0)
+    elif ostype == 'debian':
+        g.write_file('/etc/hosts', '127.0.0.1    localhost', 0)
+        g.write_file('/etc/hostname', hostname, 0)
+
     g.sync()
     g.umount_all()
 

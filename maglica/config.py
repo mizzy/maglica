@@ -23,8 +23,12 @@ class Config(dict):
         return '<Config ' + dict.__repr__(self) + '>'
 
 
-def load():
-    config_file = os.path.dirname(sys.argv[0]) + '/../etc/maglica.conf'
+def load(filename=None):
+    if filename:
+        config_file = filename
+    else:
+        config_file = os.path.dirname(sys.argv[0]) + '/../etc/maglica.conf'
+
     if not os.path.exists(config_file):
         config_file = '/etc/maglica.conf'
         

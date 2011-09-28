@@ -1,6 +1,6 @@
 import os
 import sys
-import json
+import yaml
 
 class Config(dict):
 
@@ -32,7 +32,7 @@ def load(filename=None):
     if not os.path.exists(config_file):
         config_file = '/etc/maglica.conf'
         
-    config = json.load(file(config_file))
+    config = yaml.load(file(config_file))
     if config is None:
         config = {}
     config = Config(config)

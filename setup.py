@@ -9,6 +9,7 @@ setup(
       'scripts/maglica_copy_worker',
       'scripts/maglica_host_worker',
     ],
+    install_requires = [ 'PyYAML' ],
     author = "Gosuke Miyashita",
     author_email = "gosukenator@gmail.com",
     description = "Simple internal cloud tool",

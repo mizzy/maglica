@@ -11,11 +11,11 @@ def main():
     cfg = maglica.config.load()
     pub_port = "5555"
     if cfg.client.has_key("pub_port"):
-        pub_port = cfg.client["pub_port"]
+        pub_port = str(cfg.client["pub_port"])
 
     rep_port = "5556"
     if cfg.client.has_key("rep_port"):
-        rep_port = cfg.client["rep_port"]
+        rep_port = str(cfg.client["rep_port"])
 
     subscriber = context.socket(zmq.SUB)
     subscriber.connect(str("tcp://" + cfg.client["host"] + ":" + pub_port))

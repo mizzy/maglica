@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import subprocess
 import socket
 import guestfs
@@ -19,7 +21,10 @@ def clone(args):
         if disk.get("device") == "disk":
             source = disk.find(".//source").get("file")
 
-    image_file = source.replace(image, hostname)
+    target_file = os.path.basename(source)
+    target_file = target_file.replace(image, hostname)
+    target_dir = _select_most_free_dir(conn)
+    target_path = os.path.join(target_dir, target_file)
 
     cmdline = [
         "virt-clone",
@@ -28,7 +33,7 @@ def clone(args):
         "-n",
         hostname,
         "-f",
-        image_file,
+        target_path,
         ]
     proc = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = proc.communicate()
@@ -40,7 +45,7 @@ def clone(args):
         message = stderr
         
     g = guestfs.GuestFS()
-    g.add_drive(image_file)
+    g.add_drive(target_path)
     g.launch()
     filesystems = g.list_filesystems()
     for filesystem in filesystems:
@@ -55,6 +60,7 @@ def clone(args):
     elif g.is_file('/etc/debian_version'):
         ostype = 'debian'
 
+    ### TODO: OS 毎に別モジュールにする
     if ostype == 'redhat':
         ifcfg='''DEVICE=%s
 BOOTPROTO=dhcp
@@ -109,3 +115,18 @@ def remove(args):
         "message" : "%s removed successfully" % args["name"],
         "status"  : 1,
     }
+
+def _select_most_free_dir(conn):
+    current_free_size = 0
+    pools = conn.listStoragePools()
+    for pool in pools:
+        desc = fromstring(conn.storagePoolLookupByName(pool).XMLDesc(0))
+        path = desc.find(".//path").text
+        s = os.statvfs(path)
+        free_size = s.f_bsize * s.f_bfree
+        if free_size > current_free_size:
+            most_free_dir = path
+
+        current_free_size = free_size
+
+    return most_free_dir

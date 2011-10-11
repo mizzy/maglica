@@ -10,8 +10,8 @@ import logging
 import os
 
 def clone(args):
-    image      = args["image"]
-    hostname   = args["hostname"]
+    image    = args["image"]
+    hostname = args["hostname"]
 
     conn = libvirt.open(None)
     dom  = conn.lookupByName(image)

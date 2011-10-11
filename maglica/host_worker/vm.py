@@ -105,7 +105,6 @@ def remove(args):
     for disk in desc.findall(".//disk"):
         if disk.get("device") == "disk":
             file = disk.find(".//source").get("file")
-            print file
             os.remove(file)
 
     dom.undefine()

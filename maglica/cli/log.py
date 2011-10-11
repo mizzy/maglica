@@ -12,6 +12,6 @@ def status(args):
     if status == 0:
         print "In progress: %s" % args
     elif status == 1:
-        print "Completed: %s" % args
+        print "Completed: %s, message: %s" % ( args, message )
     elif status == 2:
         print "Error: %s" % message

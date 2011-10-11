@@ -39,6 +39,9 @@ def attach_disk(args):
     elif re.match(r'.+K$', size):
         args["size"] = int(args["size"][:-1])
 
+    if args["size"] > 100 * 1024 * 1024:
+        raise Exception("Size is too large.")
+    
     maglica.vm.attach_disk(args)
     print "Now attaching %sbytes disk to %s" % ( size, args["name"] )
 

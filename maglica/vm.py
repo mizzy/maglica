@@ -42,7 +42,7 @@ def start(args):
         raise Exception("%s not found or already started." % args["name"])
 
 def stop(args):
-    dom = get_active_domain(args["name"])
+    (dom, host) = get_active_domain(args["name"])
     dom.shutdown()
 
 def remove(args):
@@ -50,7 +50,7 @@ def remove(args):
     dom = get_inactive_domain(name)
 
     if not dom:
-        dom = get_active_domain(name)
+        (dom, host) = get_active_domain(name)
         if dom:
             raise Exception("Active domain cannot be removed.Please stop it.")
         else:
@@ -101,7 +101,7 @@ def get_active_domain(name):
         for id in ids:
             dom = conn.lookupByID(id)
             if name == dom.name():
-                return dom
+                return ( dom, host )
 
 def get_inactive_domain(name):
     domains = get_inactive_domains()

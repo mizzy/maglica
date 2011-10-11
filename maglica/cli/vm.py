@@ -1,4 +1,5 @@
 import maglica.vm
+import re
 
 def clone(args):
     maglica.vm.clone(args)
@@ -26,3 +27,18 @@ def stop(args):
 def remove(args):
     maglica.vm.remove(args)
     print "%s is removed" % ( args["name"] )
+
+def attach_disk(args):
+    size = args["size"]
+    if re.match(r'.+G$', size):
+        args["size"] = int(args["size"][:-1])
+        args["size"] = args["size"] * 1024 * 1024
+    elif re.match(r'.+M$', size):
+        args["size"] = int(args["size"][:-1])
+        args["size"] = args["size"] * 1024
+    elif re.match(r'.+K$', size):
+        args["size"] = int(args["size"][:-1])
+
+    maglica.vm.attach_disk(args)
+    print "Now attaching %sbytes disk to %s" % ( size, args["name"] )
+

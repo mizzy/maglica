@@ -63,6 +63,15 @@ def remove(args):
         "args"   : args,
     })
 
+def attach_disk(args):
+    name = args["name"]
+    (dom, host) = get_active_domain(name)
+    maglica.dispatcher.dispatch({
+        "type"   : "vm",
+        "host"   : host,
+        "action" : "attach_disk",
+        "args"   : args,
+    })
 
 def get_active_domains():
     config = maglica.config.load()

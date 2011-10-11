@@ -8,6 +8,7 @@ import libvirt
 from xml.etree.ElementTree import *
 import logging
 import os
+import time
 
 def clone(args):
     image    = args["image"]
@@ -109,11 +110,59 @@ def remove(args):
 
     dom.undefine()
 
-
     return {
         "message" : "%s removed successfully" % args["name"],
         "status"  : 1,
     }
+
+def attach_disk(args):
+    conn = libvirt.open(None)
+    name = args["name"]
+    size = int(args["size"])
+    dom = conn.lookupByName(name)
+
+    devs = []
+    desc = fromstring(dom.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
+    for disk in desc.findall(".//disk"):
+        if disk.get("device") == "disk":
+            dev = disk.find(".//target").get("dev")
+            if re.match(r'^vd', dev):
+                devs.append(dev)
+
+    devs.sort()
+    if len(devs) > 0:
+        dev = devs[-1]
+        last_char = chr(ord(dev[-1])+1)
+        dev = 'vd' + last_char
+    else:
+        dev = 'vda'
+
+    dir = _select_most_free_dir(conn)
+
+    path = os.path.join(dir, name + "-" + str(time.time()))
+
+    _create_raw_image(path, size)
+
+    xml = '''
+<disk type='file' device='disk'>
+  <driver name='qemu' type='raw' cache='none'/>
+  <source file='%s' />
+  <target dev='%s' bus='virtio'/>
+</disk>
+    '''
+
+    xml = xml % (path, dev)
+
+    dom.attachDevice(xml)
+
+    desc.find(".//devices").insert(-1, fromstring(xml))
+    conn.defineXML(tostring(desc))
+
+    return {
+        "message" : "%s kbytes disk attached to %s as /dev/%s successfully" % ( size, name, dev ),
+        "status"  : 1,
+    }
+
 
 def _select_most_free_dir(conn):
     current_free_size = 0
@@ -129,3 +178,7 @@ def _select_most_free_dir(conn):
         current_free_size = free_size
 
     return most_free_dir
+
+def _create_raw_image(path, size):
+    cmd = ['dd', 'if=/dev/zero', 'of=%s' % path, 'bs=1024', 'count=%d' % size]
+    proc = subprocess.call(cmd)

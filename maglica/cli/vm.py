@@ -45,3 +45,28 @@ def attach_disk(args):
     maglica.vm.attach_disk(args)
     print "Now attaching %sbytes disk to %s" % ( size, args["name"] )
 
+def set_vcpus(args):
+    maglica.vm.set_vcpus(args)
+    vcpus = args["vcpus"]
+    name  = args["name"]
+    print "Set %s vcpus to %s.Please stop and start %s if it is runnging." % ( vcpus, name, name )
+
+def set_memory(args):
+    name = args["name"]
+    size = args["size"]
+
+    if re.match(r'.+G$', size):
+        args["size"] = int(args["size"][:-1])
+        args["size"] = args["size"] * 1024 * 1024
+    elif re.match(r'.+M$', size):
+        args["size"] = int(args["size"][:-1])
+        args["size"] = args["size"] * 1024
+    elif re.match(r'.+K$', size):
+        args["size"] = int(args["size"][:-1])
+
+    if args["size"] > 10 * 1024 * 1024:
+        raise Exception("Size is too large.")
+
+    maglica.vm.set_memory(args)
+    print "Set %sbytes memory to %s.Please stop and start %s if it is runnging." % ( size, name, name )
+

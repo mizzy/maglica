@@ -5,6 +5,7 @@ import maglica.config
 import re
 import random
 import sys
+from xml.etree.ElementTree import *
 
 def clone(args): 
     images = maglica.image.list()
@@ -73,6 +74,39 @@ def attach_disk(args):
         "args"   : args,
     })
 
+def set_vcpus(args):
+    name  = args["name"]
+    vcpus = args["vcpus"]
+
+    (dom, host) = get_active_domain(name)
+    if not dom:
+        dom  = get_inactive_domain(name)
+        host = dom["host"]
+
+    conn = libvirt.open("remote://" + host)
+    dom  = conn.lookupByName(name)
+
+    desc = fromstring(dom.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
+    desc.find(".//vcpu").text = vcpus
+    conn.defineXML(tostring(desc))
+
+def set_memory(args):
+    name = args["name"]
+    size = args["size"]
+
+    (dom, host) = get_active_domain(name)
+    if not dom:
+        dom  = get_inactive_domain(name)
+        host = dom["host"]
+
+    conn = libvirt.open("remote://" + host)
+    dom  = conn.lookupByName(name)
+
+    desc = fromstring(dom.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
+    desc.find(".//memory").text = str(size)
+    desc.find(".//currentMemory").text = str(size)
+    conn.defineXML(tostring(desc))
+
 def get_active_domains():
     config = maglica.config.load()
     vms = []
@@ -111,10 +145,10 @@ def get_active_domain(name):
             dom = conn.lookupByID(id)
             if name == dom.name():
                 return ( dom, host )
+    return (None, None)
 
 def get_inactive_domain(name):
     domains = get_inactive_domains()
     for domain in domains:
         if name == domain["name"]:
             return domain
-

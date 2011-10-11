@@ -69,12 +69,15 @@ def print_object_help(object_type):
     print "usage"
     print "====="
     for action in actions:
+        action = action.replace('_', '-')
         print "maglica %s %s" % ( object_type, action) 
     exit(1)
 
 def main():
     cfg = maglica.config.load()
     args = sys.argv[1:]
+    if len(args) > 1:
+        args[1] = args[1].replace('-', '_')
     object_type   = get_object_type(args)
 
     if len(sys.argv) < 2 or sys.argv[1] == "--help" or not object_type:

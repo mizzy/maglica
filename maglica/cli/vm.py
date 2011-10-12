@@ -70,3 +70,5 @@ def set_memory(args):
     maglica.vm.set_memory(args)
     print "Set %sbytes memory to %s.Please stop and start %s if it is runnging." % ( size, name, name )
 
+def console(args):
+    maglica.vm.console(args)

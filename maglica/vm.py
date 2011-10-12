@@ -6,6 +6,7 @@ import re
 import random
 import sys
 from xml.etree.ElementTree import *
+import subprocess
 
 def clone(args): 
     images = maglica.image.list()
@@ -106,6 +107,11 @@ def set_memory(args):
     desc.find(".//memory").text = str(size)
     desc.find(".//currentMemory").text = str(size)
     conn.defineXML(tostring(desc))
+
+def console(args):
+    name = args["name"]
+    (dom, host) = get_active_domain(name)
+    subprocess.call(['virsh', '--connect', 'remote://' + host, 'console', name])
 
 def get_active_domains():
     config = maglica.config.load()

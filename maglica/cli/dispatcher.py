@@ -74,7 +74,6 @@ def print_object_help(object_type):
     exit(1)
 
 def main():
-    cfg = maglica.config.load()
     args = sys.argv[1:]
     if len(args) > 1:
         args[1] = args[1].replace('-', '_')

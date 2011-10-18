@@ -83,6 +83,7 @@ HOSTNAME=%s
     elif ostype == 'debian':
         g.write_file('/etc/hosts', '127.0.0.1    localhost', 0)
         g.write_file('/etc/hostname', hostname, 0)
+        g.write_file('/etc/udev/rules.d/70-persistent-net.rules', '', 0)
 
     g.sync()
     g.umount_all()

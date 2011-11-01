@@ -18,14 +18,17 @@ def clone(args):
     dom  = conn.lookupByName(image)
     desc = fromstring(dom.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
 
+    sources = []
     for disk in desc.findall(".//disk"):
         if disk.get("device") == "disk":
-            source = disk.find(".//source").get("file")
+            sources.append(disk.find(".//source").get("file"))
 
-    target_file = os.path.basename(source)
-    target_file = target_file.replace(image, hostname)
-    target_dir = _select_most_free_dir(conn)
-    target_path = os.path.join(target_dir, target_file)
+    target_paths = []
+    for source in sources:
+        target_file = os.path.basename(source)
+        target_file = target_file.replace(image, hostname)
+        target_dir = _select_most_free_dir(conn)
+        target_paths.append(os.path.join(target_dir, target_file))
 
     cmdline = [
         "virt-clone",
@@ -33,12 +36,15 @@ def clone(args):
         image,
         "-n",
         hostname,
-        "-f",
-        target_path,
-        ]
+    ]
+
+    for path in target_paths:
+        cmdline.append("-f")
+        cmdline.append(path)
+
     proc = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = proc.communicate()
-    
+
     message = None
     status  = 1
     if proc.returncode:
@@ -46,7 +52,8 @@ def clone(args):
         message = stderr
         
     g = guestfs.GuestFS()
-    g.add_drive(target_path)
+    for path in target_paths:
+        g.add_drive(path)
     g.launch()
     filesystems = g.list_filesystems()
     for filesystem in filesystems:

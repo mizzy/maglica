@@ -43,7 +43,7 @@ def get_object_type(args):
 
 def get_object_actions(object_type):
     actions = filter(
-        lambda x: not re.match(r"^__", x) and x != 'maglica',
+        lambda x: not re.match(r"^__", x) and x != 'maglica' and x != 're',
         eval("dir(maglica.cli." + object_type + ")")
     )
     return actions

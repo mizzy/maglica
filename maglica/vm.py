@@ -45,7 +45,10 @@ def start(args):
 
 def stop(args):
     (dom, host) = get_active_domain(args["name"])
-    dom.shutdown()
+    if dom:
+        dom.shutdown()
+    else:
+        raise Exception("%s not found or already stopped." % args["name"])
 
 def remove(args):
     name = args["name"]

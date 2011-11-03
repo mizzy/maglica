@@ -14,7 +14,11 @@ def info(args):
     cmdline = ['virsh', '--connect', 'remote://' + host, 'vncdisplay', name]
     p = subprocess.Popen(cmdline, stdout=subprocess.PIPE)
     out = p.stdout.readline().rstrip()
-    return { "vncport": 5900 + int(out.replace(':', '')) }
+    return {
+        "name"   : name,
+        "host"   : host,
+        "vncport": 5900 + int(out.replace(':', ''))
+    }
 
     
 def clone(args): 

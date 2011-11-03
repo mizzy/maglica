@@ -8,6 +8,15 @@ import sys
 from xml.etree.ElementTree import *
 import subprocess
 
+def info(args):
+    name = args["name"]
+    (dom, host) = get_active_domain(name)
+    cmdline = ['virsh', '--connect', 'remote://' + host, 'vncdisplay', name]
+    p = subprocess.Popen(cmdline, stdout=subprocess.PIPE)
+    out = p.stdout.readline().rstrip()
+    return { "vncport": 5900 + int(out.replace(':', '')) }
+
+    
 def clone(args): 
     images = maglica.image.list()
     hosts = []

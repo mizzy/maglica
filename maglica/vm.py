@@ -63,6 +63,13 @@ def stop(args):
     else:
         raise Exception("%s not found or already stopped." % args["name"])
 
+def destroy(args):
+    (dom, host) = get_active_domain(args["name"])
+    if dom:
+        dom.destroy()
+    else:
+        raise Exception("%s not found or already destroyed." % args["name"])
+
 def remove(args):
     name = args["name"]
     dom = get_inactive_domain(name)

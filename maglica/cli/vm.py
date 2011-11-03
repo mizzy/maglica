@@ -3,6 +3,12 @@ import re
 
 def clone(args):
     maglica.vm.clone(args)
+
+def attach_iso(args):
+    maglica.vm.attach_iso(args)
+
+def set_boot_device(args):
+    maglica.vm.set_boot_device(args)
     
 def list():
     required_params = "".split(' ')

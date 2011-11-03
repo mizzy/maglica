@@ -81,6 +81,57 @@ def remove(args):
         "args"   : args,
     })
 
+def attach_iso(args):
+    name = args["name"]
+    iso  = args["iso"]
+
+    (dom, host) = get_active_domain(name)
+    if not dom:
+        dom  = get_inactive_domain(name)
+        host = dom["host"]
+
+    conn = libvirt.open("remote://" + host)
+    dom  = conn.lookupByName(name)
+
+    cdrom = None
+    desc = fromstring(dom.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
+    for disk in desc.findall(".//disk"):
+        if disk.get("device") == "cdrom":
+            cdrom = disk
+            cdrom.find(".//source").set("file", iso)
+
+
+    if not cdrom:
+        xml = '''
+<disk type="file" device="cdrom">
+  <driver name='qemu'/>
+  <source file="%s" />
+  <target dev="hdc" bus="ide"/>
+  <readonly/>
+</disk>
+   '''
+        xml = xml % ( iso )
+        desc.find(".//devices").insert(-1, fromstring(xml))
+
+    conn.defineXML(tostring(desc))
+
+def set_boot_device(args):
+    name = args["name"]
+    dev  = args["dev"]
+
+    (dom, host) = get_active_domain(name)
+    if not dom:
+        dom  = get_inactive_domain(name)
+        host = dom["host"]
+
+    conn = libvirt.open("remote://" + host)
+    dom  = conn.lookupByName(name)
+
+    desc = fromstring(dom.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
+    desc.find(".//boot").set("dev", dev)
+
+    conn.defineXML(tostring(desc))
+
 def attach_disk(args):
     name = args["name"]
     (dom, host) = get_active_domain(name)

@@ -105,8 +105,11 @@ def attach_iso(args):
     for disk in desc.findall(".//disk"):
         if disk.get("device") == "cdrom":
             cdrom = disk
-            cdrom.find(".//source").set("file", iso)
-
+            if cdrom.find(".//source"):
+                cdrom.find(".//source").set("file", iso)
+            else:
+                desc.find(".//devices").remove(cdrom)
+                cdrom = None
 
     if not cdrom:
         xml = '''

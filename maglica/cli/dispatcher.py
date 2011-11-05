@@ -27,9 +27,20 @@ def run_command(args):
                 
             key = key.replace('--', '')
             options[key] = value
-        cmd(options)
+        try:
+            cmd(options)
+        except TypeError, keys:
+            options = ' '.join(["--%s=..." % key for key in str(keys).split(' ')])
+            print "usage\n====="
+            print "maglica %s %s %s" % ( type, action, options )
+
     else:
-        cmd()
+        try:
+            cmd({})
+        except TypeError, keys:
+            options = ' '.join(["--%s=..." % key for key in str(keys).split(' ')])
+            print "usage\n====="
+            print "maglica %s %s %s" % ( type, action, options )
 
 def get_object_type(args):
     """

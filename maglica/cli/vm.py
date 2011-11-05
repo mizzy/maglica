@@ -10,7 +10,7 @@ def attach_iso(args):
 def set_boot_device(args):
     maglica.vm.set_boot_device(args)
     
-def list():
+def list(args):
     required_params = "".split(' ')
     optional_params = "".split(' ')
     
@@ -39,21 +39,8 @@ def remove(args):
     print "%s is removed" % ( args["name"] )
 
 def attach_disk(args):
-    size = args["size"]
-    if re.match(r'.+G$', size):
-        args["size"] = int(args["size"][:-1])
-        args["size"] = args["size"] * 1024 * 1024
-    elif re.match(r'.+M$', size):
-        args["size"] = int(args["size"][:-1])
-        args["size"] = args["size"] * 1024
-    elif re.match(r'.+K$', size):
-        args["size"] = int(args["size"][:-1])
-
-    if args["size"] > 100 * 1024 * 1024:
-        raise Exception("Size is too large.")
-    
     maglica.vm.attach_disk(args)
-    print "Now attaching %sbytes disk to %s" % ( size, args["name"] )
+    print "Now attaching %sbytes disk to %s" % ( args["size"], args["name"] )
 
 def set_vcpus(args):
     maglica.vm.set_vcpus(args)
@@ -62,23 +49,8 @@ def set_vcpus(args):
     print "Set %s vcpus to %s.Please stop and start %s if it is runnging." % ( vcpus, name, name )
 
 def set_memory(args):
-    name = args["name"]
-    size = args["size"]
-
-    if re.match(r'.+G$', size):
-        args["size"] = int(args["size"][:-1])
-        args["size"] = args["size"] * 1024 * 1024
-    elif re.match(r'.+M$', size):
-        args["size"] = int(args["size"][:-1])
-        args["size"] = args["size"] * 1024
-    elif re.match(r'.+K$', size):
-        args["size"] = int(args["size"][:-1])
-
-    if args["size"] > 10 * 1024 * 1024:
-        raise Exception("Size is too large.")
-
     maglica.vm.set_memory(args)
-    print "Set %sbytes memory to %s.Please stop and start %s if it is runnging." % ( size, name, name )
+    print "Set %sbytes memory to %s.Please stop and start %s if it is runnging." % ( args["size"], args["name"], args["name"] )
 
 def console(args):
     maglica.vm.console(args)

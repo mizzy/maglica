@@ -1,6 +1,8 @@
 import maglica.request_log
+import maglica.util
 
 def status(args):
+    maglica.util.check_args(args, "id")
     request_log = maglica.request_log.RequestLog()
 
     row = request_log.get_status(args["id"])

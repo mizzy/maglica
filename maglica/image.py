@@ -3,6 +3,7 @@ import maglica.config
 import re
 from xml.etree.ElementTree import *
 import maglica.dispatcher
+from maglica.util import check_args
 
 # Listing up inactive images
 def list():
@@ -19,6 +20,7 @@ def list():
     return images
 
 def copy(args):
+    check_args(args, ["name", "dest"])
     maglica.dispatcher.dispatch({
         "type"   : "image",
         "action" : "copy",

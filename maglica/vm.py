@@ -7,24 +7,28 @@ import random
 import sys
 from xml.etree.ElementTree import *
 import subprocess
+from maglica.util import check_args
 
 def info(args):
+    check_args(args, ["name"])
     name = args["name"]
     (dom, host) = get_active_domain(name)
-    cmdline = ['virsh', '--connect', 'remote://' + host, 'vncdisplay', name]
+    cmdline = ["virsh", "--connect", "remote://" + host, "vncdisplay", name]
     p = subprocess.Popen(cmdline, stdout=subprocess.PIPE)
     out = p.stdout.readline().rstrip()
     return {
         "name"   : name,
         "host"   : host,
-        "vncport": 5900 + int(out.replace(':', ''))
+        "vncport": 5900 + int(out.replace(":", ""))
     }
 
     
 def clone(args): 
+    check_args(args, ["image", "hostname"])
+
     images = maglica.image.list()
     hosts = []
-    
+
     for image in images:
         if args["image"] == image["name"]:
             hosts.append(image["host"])
@@ -48,6 +52,7 @@ def list():
     return vms
 
 def start(args):
+    check_args(args, "name")
     dom = get_inactive_domain(args["name"])
     if dom:
         conn = libvirt.open("remote://" + dom["host"])
@@ -57,6 +62,7 @@ def start(args):
         raise Exception("%s not found or already started." % args["name"])
 
 def stop(args):
+    check_args(args, "name")
     (dom, host) = get_active_domain(args["name"])
     if dom:
         dom.shutdown()
@@ -64,6 +70,7 @@ def stop(args):
         raise Exception("%s not found or already stopped." % args["name"])
 
 def destroy(args):
+    check_args(args, "name")
     (dom, host) = get_active_domain(args["name"])
     if dom:
         dom.destroy()
@@ -71,6 +78,7 @@ def destroy(args):
         raise Exception("%s not found or already destroyed." % args["name"])
 
 def remove(args):
+    check_args(args, "name")
     name = args["name"]
     dom = get_inactive_domain(name)
 
@@ -89,6 +97,8 @@ def remove(args):
     })
 
 def attach_iso(args):
+    check_args(args, ["name", "iso"])
+
     name = args["name"]
     iso  = args["iso"]
 
@@ -112,20 +122,22 @@ def attach_iso(args):
                 cdrom = None
 
     if not cdrom:
-        xml = '''
+        xml = """
 <disk type="file" device="cdrom">
-  <driver name='qemu'/>
+  <driver name="qemu"/>
   <source file="%s" />
   <target dev="hdc" bus="ide"/>
   <readonly/>
 </disk>
-   '''
+   """
         xml = xml % ( iso )
         desc.find(".//devices").insert(-1, fromstring(xml))
 
     conn.defineXML(tostring(desc))
 
 def set_boot_device(args):
+    check_args(args, ["name", "dev"])
+     
     name = args["name"]
     dev  = args["dev"]
 
@@ -143,6 +155,21 @@ def set_boot_device(args):
     conn.defineXML(tostring(desc))
 
 def attach_disk(args):
+    check_args(args, ["name", "size"])
+
+    size = args["size"]
+    if re.match(r'.+G$', size):
+        args["size"] = int(args["size"][:-1])
+        args["size"] = args["size"] * 1024 * 1024
+    elif re.match(r'.+M$', size):
+        args["size"] = int(args["size"][:-1])
+        args["size"] = args["size"] * 1024
+    elif re.match(r'.+K$', size):
+        args["size"] = int(args["size"][:-1])
+
+    if args["size"] > 100 * 1024 * 1024:
+        raise Exception("Size is too large.")
+
     name = args["name"]
     (dom, host) = get_active_domain(name)
     maglica.dispatcher.dispatch({
@@ -153,6 +180,8 @@ def attach_disk(args):
     })
 
 def set_vcpus(args):
+    check_args(args, ["name", "vcpus"])
+
     name  = args["name"]
     vcpus = args["vcpus"]
 
@@ -169,8 +198,23 @@ def set_vcpus(args):
     conn.defineXML(tostring(desc))
 
 def set_memory(args):
+    check_args(args, ["name", "size"])
+
+
     name = args["name"]
     size = args["size"]
+
+    if re.match(r'.+G$', size):
+        args["size"] = int(args["size"][:-1])
+        args["size"] = args["size"] * 1024 * 1024
+    elif re.match(r'.+M$', size):
+        args["size"] = int(args["size"][:-1])
+        args["size"] = args["size"] * 1024
+    elif re.match(r'.+K$', size):
+        args["size"] = int(args["size"][:-1])
+
+    if args["size"] > 10 * 1024 * 1024:
+        raise Exception("Size is too large.")
 
     (dom, host) = get_active_domain(name)
     if not dom:
@@ -186,15 +230,16 @@ def set_memory(args):
     conn.defineXML(tostring(desc))
 
 def console(args):
+    check_args(args, "name")
     name = args["name"]
     (dom, host) = get_active_domain(name)
-    subprocess.call(['virsh', '--connect', 'remote://' + host, 'console', name])
+    subprocess.call(["virsh", "--connect", "remote://" + host, "console", name])
 
 def get_active_domains():
     config = maglica.config.load()
     vms = []
     for host in config.hosts:
-        conn = libvirt.open('remote://' + host)
+        conn = libvirt.open("remote://" + host)
         ids = conn.listDomainsID()
         for id in ids:
             dom = conn.lookupByID(id)
@@ -209,7 +254,7 @@ def get_inactive_domains():
     config = maglica.config.load()
     vms = []
     for host in config.hosts:
-        conn = libvirt.open('remote://' + host)
+        conn = libvirt.open("remote://" + host)
         domains = conn.listDefinedDomains()
         for domain in domains:
             vms.append({
@@ -222,7 +267,7 @@ def get_inactive_domains():
 def get_active_domain(name):
     config = maglica.config.load()
     for host in config.hosts:
-        conn = libvirt.open('remote://' + host)
+        conn = libvirt.open("remote://" + host)
         ids = conn.listDomainsID()
         for id in ids:
             dom = conn.lookupByID(id)

@@ -1,6 +1,6 @@
 import maglica.image
 
-def list():
+def list(args):
     print "Name                                     Host"
     print "---------------------------------------------------------"
     images = maglica.image.list()

@@ -10,7 +10,11 @@ import subprocess
 from maglica.util import check_args
 
 def info(args):
-    check_args(args, ["name"])
+    options = {
+        "mandatory": ["name"],
+        "optional" : [],
+    }
+    check_args(args, options)
     name = args["name"]
     (dom, host) = get_active_domain(name)
     cmdline = ["virsh", "--connect", "remote://" + host, "vncdisplay", name]
@@ -24,7 +28,11 @@ def info(args):
 
     
 def clone(args): 
-    check_args(args, ["image", "hostname"])
+    options = {
+        "mandatory": ["image", "hostname"],
+        "optional" : ["start"],
+    }
+    check_args(args, options)
 
     images = maglica.image.list()
     hosts = []
@@ -52,7 +60,11 @@ def list():
     return vms
 
 def start(args):
-    check_args(args, "name")
+    options = {
+        "mandatory": ["name"],
+        "optional" : [],
+    }
+    check_args(args, options)
     dom = get_inactive_domain(args["name"])
     if dom:
         conn = libvirt.open("remote://" + dom["host"])
@@ -62,7 +74,11 @@ def start(args):
         raise Exception("%s not found or already started." % args["name"])
 
 def stop(args):
-    check_args(args, "name")
+    options = {
+        "mandatory": ["name"],
+        "optional" : [],
+    }
+    check_args(args, options)
     (dom, host) = get_active_domain(args["name"])
     if dom:
         dom.shutdown()
@@ -70,7 +86,11 @@ def stop(args):
         raise Exception("%s not found or already stopped." % args["name"])
 
 def destroy(args):
-    check_args(args, "name")
+    options = {
+        "mandatory": ["name"],
+        "optional" : [],
+    }
+    check_args(args, options)
     (dom, host) = get_active_domain(args["name"])
     if dom:
         dom.destroy()
@@ -78,7 +98,11 @@ def destroy(args):
         raise Exception("%s not found or already destroyed." % args["name"])
 
 def remove(args):
-    check_args(args, "name")
+    options = {
+        "mandatory": ["name"],
+        "optional" : [],
+    }
+    check_args(args, options)
     name = args["name"]
     dom = get_inactive_domain(name)
 
@@ -97,7 +121,11 @@ def remove(args):
     })
 
 def attach_iso(args):
-    check_args(args, ["name", "iso"])
+    options = {
+        "mandatory": ["name", "iso"],
+        "optional" : [],
+    }
+    check_args(args, options)
 
     name = args["name"]
     iso  = args["iso"]
@@ -136,7 +164,11 @@ def attach_iso(args):
     conn.defineXML(tostring(desc))
 
 def set_boot_device(args):
-    check_args(args, ["name", "dev"])
+    options = {
+        "mandatory": ["name", "dev"],
+        "optional" : [],
+    }
+    check_args(args, options)
      
     name = args["name"]
     dev  = args["dev"]
@@ -155,7 +187,11 @@ def set_boot_device(args):
     conn.defineXML(tostring(desc))
 
 def attach_disk(args):
-    check_args(args, ["name", "size"])
+    options = {
+        "mandatory": ["name", "size"],
+        "optional" : [],
+    }
+    check_args(args, options)
 
     size = args["size"]
     if re.match(r'.+G$', size):
@@ -180,7 +216,11 @@ def attach_disk(args):
     })
 
 def set_vcpus(args):
-    check_args(args, ["name", "vcpus"])
+    options = {
+        "mandatory": ["name", "vcpus"],
+        "optional" : [],
+    }
+    check_args(args, options)
 
     name  = args["name"]
     vcpus = args["vcpus"]
@@ -198,8 +238,11 @@ def set_vcpus(args):
     conn.defineXML(tostring(desc))
 
 def set_memory(args):
-    check_args(args, ["name", "size"])
-
+    options = {
+        "mandatory": ["name", "size"],
+        "optional" : [],
+    }
+    check_args(args, options)
 
     name = args["name"]
     size = args["size"]
@@ -230,7 +273,11 @@ def set_memory(args):
     conn.defineXML(tostring(desc))
 
 def console(args):
-    check_args(args, "name")
+    options = {
+        "mandatory": ["name"],
+        "optional" : [],
+    }
+    check_args(args, options)
     name = args["name"]
     (dom, host) = get_active_domain(name)
     subprocess.call(["virsh", "--connect", "remote://" + host, "console", name])

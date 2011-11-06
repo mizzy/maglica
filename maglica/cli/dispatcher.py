@@ -29,18 +29,23 @@ def run_command(args):
             options[key] = value
         try:
             cmd(options)
-        except TypeError, keys:
-            options = ' '.join(["--%s=..." % key for key in str(keys).split(' ')])
-            print "usage\n====="
-            print "maglica %s %s %s" % ( type, action, options )
+        except TypeError, options:
+            print_options(type, action, options)
 
     else:
         try:
             cmd({})
-        except TypeError, keys:
-            options = ' '.join(["--%s=..." % key for key in str(keys).split(' ')])
-            print "usage\n====="
-            print "maglica %s %s %s" % ( type, action, options )
+        except TypeError, options:
+            print_options(type, action, options)
+
+def print_options(type, action, options):
+    mandatory = " ".join(["--%s=..." % x for x in options[0]["mandatory"]])
+    optional  = " ".join(["--%s=..." % x for x in options[0]["optional"]])
+    if optional:
+        optional = "[%s]" % optional
+
+    print "usage\n====="
+    print "maglica %s %s %s %s" % ( type, action, mandatory, optional )
 
 def get_object_type(args):
     """

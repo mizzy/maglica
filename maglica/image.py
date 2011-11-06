@@ -20,7 +20,11 @@ def list():
     return images
 
 def copy(args):
-    check_args(args, ["name", "dest"])
+    options = {
+        "mandatory": ["name", "dest"],
+        "optional" : [],
+    }
+    check_args(args, options)
     maglica.dispatcher.dispatch({
         "type"   : "image",
         "action" : "copy",

@@ -28,6 +28,9 @@ def clone(args):
         target_file = os.path.basename(source)
         target_file = target_file.replace(image, hostname)
         target_dir = _select_most_free_dir(conn)
+        if not target_dir:
+            target_dir = os.path.dirname(source)
+
         target_paths.append(os.path.join(target_dir, target_file))
 
     cmdline = [
@@ -147,6 +150,8 @@ def attach_disk(args):
         dev = 'vda'
 
     dir = _select_most_free_dir(conn)
+    if not dir:
+        dir = "/var/lib/libvirt/images"
 
     path = os.path.join(dir, name + "-" + str(time.time()))
 
@@ -176,6 +181,7 @@ def attach_disk(args):
 def _select_most_free_dir(conn):
     current_free_size = 0
     pools = conn.listStoragePools()
+    most_free_dir = None
     for pool in pools:
         desc = fromstring(conn.storagePoolLookupByName(pool).XMLDesc(0))
         path = desc.find(".//path").text

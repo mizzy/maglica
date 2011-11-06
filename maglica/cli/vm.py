@@ -2,6 +2,16 @@ import maglica.vm
 import re
 
 def clone(args):
+    if args.has_key("start"):
+        start = args["start"]
+    else:
+        start = True
+
+    if start == 0 or start == "false" or start == "False":
+        args["start"] = False
+    else:
+        args["start"] = True
+
     maglica.vm.clone(args)
 
 def attach_iso(args):

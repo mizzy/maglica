@@ -96,7 +96,8 @@ HOSTNAME=%s
     g.umount_all()
 
     dom = conn.lookupByName(hostname)
-    dom.create()
+    if args["start"]:
+        dom.create()
     
     if status == 1:
         message = "Created %s successfully on %s" % ( image, hostname )

@@ -251,15 +251,15 @@ def set_memory(args):
     size = args["size"]
 
     if re.match(r'.+G$', size):
-        args["size"] = int(args["size"][:-1])
-        args["size"] = args["size"] * 1024 * 1024
+        size = int(size[:-1])
+        size = size * 1024 * 1024
     elif re.match(r'.+M$', size):
-        args["size"] = int(args["size"][:-1])
-        args["size"] = args["size"] * 1024
+        size = int(size[:-1])
+        size = size * 1024
     elif re.match(r'.+K$', size):
-        args["size"] = int(args["size"][:-1])
+        size = int(size[:-1])
 
-    if args["size"] > 10 * 1024 * 1024:
+    if size > 10 * 1024 * 1024:
         raise Exception("Size is too large.")
 
     (dom, host) = get_active_domain(name)

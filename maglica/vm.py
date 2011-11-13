@@ -237,6 +237,9 @@ def set_vcpus(args):
     desc.find(".//vcpu").text = vcpus
     conn.defineXML(tostring(desc))
 
+    if dom.isActive():
+        dom.setVcpus(int(vcpus))
+
 def set_memory(args):
     options = {
         "mandatory": ["name", "size"],
@@ -271,6 +274,9 @@ def set_memory(args):
     desc.find(".//memory").text = str(size)
     desc.find(".//currentMemory").text = str(size)
     conn.defineXML(tostring(desc))
+
+    if dom.isActive():
+        dom.setMemory(int(size))
 
 def console(args):
     options = {

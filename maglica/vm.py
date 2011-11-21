@@ -20,7 +20,7 @@ def info(args):
 def clone(args): 
     options = {
         "mandatory": ["image", "hostname"],
-        "optional" : ["start"],
+        "optional" : ["start", "format"],
     }
     check_args(args, options)
 

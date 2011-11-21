@@ -58,12 +58,12 @@ def clone(args):
     for path in target_paths:
         g.add_drive(path)
     g.launch()
-    filesystems = g.list_filesystems()
-    for filesystem in filesystems:
-        if re.match(r'.+root$', filesystem[0]) or re.match(r'.+LogVol00$', filesystem[0]) or filesystem[0] == '/dev/vda1':
-            fs = filesystem[0]
 
-    g.mount(fs, '/')
+    roots       = g.inspect_os()
+    mountpoints = g.inspect_get_mountpoints(roots[0])
+
+    for mountpoint in mountpoints:
+        g.mount(mountpoint[1], mountpoint[0])
 
     ostype = None
     if g.is_file('/etc/redhat-release'):

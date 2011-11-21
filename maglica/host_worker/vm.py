@@ -95,6 +95,9 @@ HOSTNAME=%s
         g.write_file('/etc/hostname', hostname, 0)
         g.write_file('/etc/udev/rules.d/70-persistent-net.rules', '', 0)
 
+    shadow = g.read_file("/etc/shadow")
+    g.write_file("/etc/shadow", re.sub(r"^root:[^:]+:", "root::", shadow), 0)
+
     g.sync()
     g.umount_all()
 

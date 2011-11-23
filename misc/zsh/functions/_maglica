@@ -1,0 +1,30 @@
+#compdef maglica
+
+_maglica() {
+  if (( CURRENT == 2 )); then
+    compadd image log vm
+  else
+    _call_function ret _maglica-$words[2] || _message 'no more arguments'
+  fi
+
+  return ret
+}
+
+(( $+functions[_maglica-image] )) || _maglica-image() {
+  if (( CURRENT == 3 )); then
+    compadd copy list
+  elif (( CURRENT > 3 )); then
+    _call_function ret _maglica-$words[2]-$words[3] || _message 'no more arguments'
+  fi
+
+  return ret
+}
+
+(( $+functions[_maglica-image-cooy] )) || _maglica-image-copy() {
+  _arguments : \
+    '--exclude=[Exclude package(s) by name or glob]:Exclude Packages' \
+    '--include=[Include package(s) by name or glob]:Include Packages' \
+    ':::'
+}
+
+

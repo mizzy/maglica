@@ -31,3 +31,135 @@ _maglica() {
     ':::'
 }
 
+(( $+functions[_maglica-vm] )) || _maglica-vm() {
+  if (( CURRENT == 3 )); then
+    compadd attach-disk attach-iso clone console destroy list remove set-boot-device set-memory set-vcpus start stop
+  elif (( CURRENT > 3 )); then
+    _call_function ret _maglica-$words[2]-$words[3] || _message 'no more arguments'
+  fi
+
+  return ret
+}
+
+(( $+functions[_maglica-vm-attach-disk] )) || _maglica-vm-attach-disk() {
+  local -a vms
+  vms=($(_call_program vms maglica_zsh_completion vms))
+
+  _arguments : \
+    '--name=[Vm Name]:VM Name:($vms)' \
+    '--size=[Disk Size]:Disk Size (ex\: 100M, 5G)' \
+    ':::'
+}
+
+(( $+functions[_maglica-vm-attach-iso] )) || _maglica-vm-attach-iso() {
+  local -a vms
+  vms=($(_call_program vms maglica_zsh_completion vms))
+
+  _arguments : \
+    '--name=[Vm Name]:VM Name:($vms)' \
+    '--iso=[ISO File Path]:IFO File Path':_files \
+    ':::'
+}
+
+(( $+functions[_maglica-vm-clone] )) || _maglica-vm-clone() {
+  local -a images
+  images=($(_call_program images maglica_zsh_completion images))
+
+  _arguments : \
+    '--image=[Image Name]:Image Name:($images)' \
+    '--hostname=[VM Host Name]:VM Host Name' \
+    '--start=[Start or not after vm created]:Start or not after vm created:(0 1)' \
+    ':::'
+}
+
+(( $+functions[_maglica-vm-console] )) || _maglica-vm-console() {
+  local -a vms
+  vms=($(_call_program vms maglica_zsh_completion vms))
+
+  _arguments : \
+    '--name=[Vm Name]:VM Name:($vms)' \
+    ':::'
+}
+
+(( $+functions[_maglica-vm-destroy] )) || _maglica-vm-destroy() {
+  local -a vms
+  vms=($(_call_program vms maglica_zsh_completion vms))
+
+  _arguments : \
+    '--name=[Vm Name]:VM Name:($vms)' \
+    ':::'
+}
+
+(( $+functions[_maglica-vm-remove] )) || _maglica-vm-remove() {
+  local -a vms
+  vms=($(_call_program vms maglica_zsh_completion vms))
+
+  _arguments : \
+    '--name=[Vm Name]:VM Name:($vms)' \
+    ':::'
+}
+
+(( $+functions[_maglica-vm-set-boot-device] )) || _maglica-vm-set-boot-device() {
+  local -a vms
+  vms=($(_call_program vms maglica_zsh_completion vms))
+
+  _arguments : \
+    '--name=[Vm Name]:VM Name:($vms)' \
+    '--dev=[Boot Device]:Boot Device:(hd cdrom)' \
+    ':::'
+}
+
+
+(( $+functions[_maglica-vm-set-memory] )) || _maglica-vm-set-memory() {
+  local -a vms
+  vms=($(_call_program vms maglica_zsh_completion vms))
+
+  _arguments : \
+    '--name=[Vm Name]:VM Name:($vms)' \
+    '--size=[Disk Size]:Disk Size (ex\: 256M, 1G)' \
+    ':::'
+}
+
+(( $+functions[_maglica-vm-set-vcpus] )) || _maglica-vm-set-vcpus() {
+  local -a vms
+  vms=($(_call_program vms maglica_zsh_completion vms))
+
+  _arguments : \
+    '--name=[Vm Name]:VM Name:($vms)' \
+    '--vcpus=[Number of VCPUs]:Number of VCPUs' \
+    ':::'
+}
+
+(( $+functions[_maglica-vm-start] )) || _maglica-vm-start() {
+  local -a vms
+  vms=($(_call_program vms maglica_zsh_completion vms))
+
+  _arguments : \
+    '--name=[Vm Name]:VM Name:($vms)' \
+    ':::'
+}
+
+(( $+functions[_maglica-vm-stop] )) || _maglica-vm-stop() {
+  local -a vms
+  vms=($(_call_program vms maglica_zsh_completion vms))
+
+  _arguments : \
+    '--name=[Vm Name]:VM Name:($vms)' \
+    ':::'
+}
+
+(( $+functions[_maglica-log] )) || _maglica-log() {
+  if (( CURRENT == 3 )); then
+    compadd status
+  elif (( CURRENT > 3 )); then
+    _call_function ret _maglica-$words[2]-$words[3] || _message 'no more arguments'
+  fi
+
+  return ret
+}
+
+(( $+functions[_maglica-log-status] )) || _maglica-log-status() {
+  _arguments : \
+    '--id=[Request ID]:Request ID' \
+    ':::'
+}

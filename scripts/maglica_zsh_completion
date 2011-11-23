@@ -1,0 +1,15 @@
+#!/usr/bin/python
+
+import sys
+sys.path.insert(0, '.')
+import maglica.config
+import maglica.image
+
+if __name__ == '__main__':
+   if sys.argv[1] == 'hosts':
+      print " ".join(maglica.config.load().hosts)
+   if sys.argv[1] == 'images':
+      images = []
+      for image in maglica.image.list():
+         images.append(image["name"])
+      print " ".join(images)

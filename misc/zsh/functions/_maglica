@@ -21,10 +21,13 @@ _maglica() {
 }
 
 (( $+functions[_maglica-image-cooy] )) || _maglica-image-copy() {
+  local -a hosts images
+  hosts=($(_call_program hosts maglica_zsh_completion hosts))
+  images=($(_call_program images maglica_zsh_completion images))
+
   _arguments : \
-    '--exclude=[Exclude package(s) by name or glob]:Exclude Packages' \
-    '--include=[Include package(s) by name or glob]:Include Packages' \
+    '--name=[Image Name]:Image Name:($images)' \
+    '--dest=[Destination Host]:Destination Host:($hosts)' \
     ':::'
 }
-
 

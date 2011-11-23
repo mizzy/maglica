@@ -8,6 +8,7 @@ setup(
       'scripts/maglica_client_worker',
       'scripts/maglica_copy_worker',
       'scripts/maglica_host_worker',
+      'scripts/maglica_zsh_completion',
     ],
     install_requires = [ 'PyYAML' ],
     author = "Gosuke Miyashita",

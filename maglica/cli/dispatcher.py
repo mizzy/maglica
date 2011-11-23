@@ -45,6 +45,7 @@ def print_options(type, action, options):
         optional = "[%s]" % optional
 
     print "usage\n====="
+    action = action.replace('_', '-')
     print "maglica %s %s %s %s" % ( type, action, mandatory, optional )
 
 def get_object_type(args):

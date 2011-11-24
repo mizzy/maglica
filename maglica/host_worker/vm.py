@@ -14,6 +14,10 @@ def clone(args):
     image    = args["image"]
     hostname = args["hostname"]
 
+    format = None
+    if args.has_key("format"):
+        format = args["format"]
+
     conn = libvirt.open(None)
     dom  = conn.lookupByName(image)
     desc = fromstring(dom.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
@@ -98,15 +102,44 @@ HOSTNAME=%s
     shadow = g.read_file("/etc/shadow")
     g.write_file("/etc/shadow", re.sub(r"^root:[^:]+:", "root:$1$ZJsvbRbB$dWzQZuu8dDFR8wr6PTPjp0:", shadow), 0)
 
+    if format == "vmdk":
+        grub = g.read_file("/boot/grub/grub.conf")
+        g.write_file("/boot/grub/grub.conf", re.sub(r"console=[^\s]+", "", grub), 0)
+
     g.sync()
     g.umount_all()
 
     dom = conn.lookupByName(hostname)
-    if args["start"]:
+    if args["start"] and format != "vmdk":
         dom.create()
-    
-    if status == 1:
+
+    if format == "vmdk":
+        vmdk_path = "/var/www/html/maglica/%s.vmdk" % hostname
+        cmdline = [
+            "qemu-img",
+            "convert",
+            "-f",
+            "raw",
+            "-O",
+            "vmdk",
+            target_paths[0],
+            vmdk_path,
+            ]
+
+        proc = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = proc.communicate()
+
+        if proc.returncode:
+            status = 2
+            message = stderr
+        else:
+            message = "Get vmdk file from http://%s/maglica/%s.vmdk" % ( socket.gethostname(), hostname )
+
+        remove({"name": hostname})
+
+    if status == 1 and not message:
         message = "Created %s successfully on %s" % ( image, hostname )
+
     return {
         "message": message,
         "status" : status,

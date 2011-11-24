@@ -68,7 +68,8 @@ _maglica() {
   _arguments : \
     '--image=[Image Name]:Image Name:($images)' \
     '--hostname=[VM Host Name]:VM Host Name' \
-    '--start=[Start or not after vm created]:Start or not after vm created:(0 1)' \
+    '--start=[(Optional)Start or not after vm created]:(Optional)Start or not after vm created:(0 1)' \
+    '--format=[(Optional)Clone VM as another format]:(Optional)Clone VM as another format:(vmdk)' \
     ':::'
 }
 

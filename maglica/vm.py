@@ -144,7 +144,8 @@ def attach_disk(args):
         raise Exception("Size is too large.")
 
     name = args["name"]
-    (dom, host) = get_active_domain(name)
+    virt = Virt(hosts())
+    (dom, host) = virt.get_active_domain(name)
     maglica.dispatcher.dispatch({
         "type"   : "vm",
         "host"   : host,

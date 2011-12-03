@@ -1,5 +1,7 @@
 import maglica.request_log
 import maglica.util
+from termcolor import cprint
+import json
 
 def status(args):
     options = {
@@ -12,12 +14,21 @@ def status(args):
     row = request_log.get_status(args["id"])
 
     status  = row["status"]
-    args    = row["args"]
+    args    = json.loads(row["args"])
     message = row["message"]
-    
+
     if status == 0:
-        print "In progress: %s" % args
+        cprint("In progress", "yellow")
+        options = []
+        for key in args["args"].keys():
+            options.append("--%s=%s" % (key, args["args"][key]))
+        options = " ".join(options)
+        print "Running %s %s %s on %s" % ( args["type"], args["action"], options, args["host"])
     elif status == 1:
-        print "Completed: %s, message: %s" % ( args, message )
+        cprint("Completed", "green")
     elif status == 2:
-        print "Error: %s" % message
+        cprint("Error", "red")
+
+    if message:
+        print message
+

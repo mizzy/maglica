@@ -10,7 +10,7 @@ setup(
       'scripts/maglica_host_worker',
       'scripts/maglica_zsh_completion',
     ],
-    install_requires = [ 'PyYAML' ],
+    install_requires = [ 'PyYAML', 'termcolor' ],
     author = "Gosuke Miyashita",
     author_email = "gosukenator@gmail.com",
     description = "Simple internal cloud tool",

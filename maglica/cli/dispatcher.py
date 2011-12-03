@@ -5,6 +5,7 @@ import maglica.cli
 import maglica.cli.image
 import maglica.cli.vm
 import maglica.cli.log
+from maglica.util import MaglicaCliException
 
 OBJECT_TYPES = filter(
     lambda x: not re.match(r"^__", x) and x != 'dispatcher',
@@ -29,13 +30,13 @@ def run_command(args):
             options[key] = value
         try:
             cmd(options)
-        except TypeError, options:
+        except MaglicaCliException, options:
             print_options(type, action, options)
 
     else:
         try:
             cmd({})
-        except TypeError, options:
+        except MaglicaCliException, options:
             print_options(type, action, options)
 
 def print_options(type, action, options):

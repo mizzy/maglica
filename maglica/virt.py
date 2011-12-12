@@ -6,11 +6,12 @@ import subprocess
 class Virt:
     def __init__(self, hosts=["test"]):
         self.hosts = []
+        self.conf  = {}
         for host in hosts:
             if host == "test":
                 uri = "test:///default"
             else:
-                uri = "remote://" + host
+                uri = self.uri(host)
             conn = libvirt.open(uri)
             self.hosts.append({"name": host, "conn": conn})
 
@@ -190,7 +191,7 @@ class Virt:
 
     def info(self, name):
         (dom, host) = self.get_active_domain(name)
-        cmdline = ["virsh", "--connect", "remote://" + host, "vncdisplay", name]
+        cmdline = ["virsh", "--connect", self.uri(host), "vncdisplay", name]
         p = subprocess.Popen(cmdline, stdout=subprocess.PIPE)
         out = p.stdout.readline().rstrip()
         return {
@@ -201,4 +202,16 @@ class Virt:
 
     def console(self, name):
         (dom, host) = self.get_active_domain(name)
-        subprocess.call(["virsh", "--connect", "remote://" + host, "console", name])
+        subprocess.call(["virsh", "--connect", self.uri(host), "console", name])
+
+    def uri(self, host):
+        if not self.conf:
+            self.conf = maglica.config.load()
+
+        if not hasattr(self.conf, "libvirt"):
+            return "remote://%s/" % host
+
+        libvirt = self.conf.libvirt
+        return "%s+%s://%s/%s" % (
+            libvirt["driver"], libvirt["transport"], host, libvirt["path"]
+        )

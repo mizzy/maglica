@@ -33,8 +33,10 @@ def load(filename=None):
         config_file = '/etc/maglica.conf'
         
     config = yaml.load(file(config_file))
-    if config is None:
-        config = {}
-    config = Config(config)
-    return config
+    return load_from_dict(config)
 
+def load_from_dict(dict):
+    if dict is None:
+        return {}
+    else:
+        return Config(dict)

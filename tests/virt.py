@@ -2,6 +2,7 @@
 
 from nose.tools import *
 from maglica.virt import Virt 
+import maglica.config
 
 xml = '''
 <domain type='test'>
@@ -103,3 +104,21 @@ def test_set_memory():
     virt = Virt()
     ok_(virt.set_memory("test", 1024*1024))
     
+def test_uri_default():
+    virt = Virt()
+    eq_(virt.uri("host0.example.jp"), "remote://host0.example.jp/")
+
+def test_uri_qemu():
+    virt = Virt()
+
+    conf = maglica.config.load_from_dict({
+        "libvirt": {
+            "driver"    : "qemu",
+            "transport" : "tcp",
+            "path"      : "system",
+        }
+    })
+
+    virt.conf = conf
+
+    eq_(virt.uri("host0.example.jp"), "qemu+tcp://host0.example.jp/system")

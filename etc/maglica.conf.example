@@ -5,3 +5,7 @@ client:
   host: client.example.com
   pub_port: 5555
   rep_port: 5556
+libvirt:
+  driver: qemu
+  transport: tcp
+  path: system

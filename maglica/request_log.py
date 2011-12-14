@@ -59,3 +59,8 @@ class RequestLog():
         row = self.con.execute(sql, [ request_id ]).fetchone()
         return row
     
+    def tail(self):
+        sql = "select * from requests order by id desc limit 10"
+        row = self.con.execute(sql).fetchall()
+        row.reverse()
+        return row

@@ -13,6 +13,15 @@ def status(args):
 
     row = request_log.get_status(args["id"])
 
+    _print(row)
+
+def tail(args):
+    request_log = maglica.request_log.RequestLog()
+    rows = request_log.tail()
+    for row in rows:
+        _print(row)
+
+def _print(row):
     status  = row["status"]
     args    = json.loads(row["args"])
     message = row["message"]
@@ -31,4 +40,4 @@ def status(args):
 
     if message:
         print message
-
+    

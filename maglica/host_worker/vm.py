@@ -138,7 +138,7 @@ HOSTNAME=%s
         remove({"name": hostname})
 
     if status == 1 and not message:
-        message = "Created %s successfully on %s" % ( image, hostname )
+        message = "%s was cloned from %s on %s successfully"  % ( hostname, image, socket.gethostname() )
 
     return {
         "message": message,

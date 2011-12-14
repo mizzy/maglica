@@ -151,7 +151,7 @@ _maglica() {
 
 (( $+functions[_maglica-log] )) || _maglica-log() {
   if (( CURRENT == 3 )); then
-    compadd status
+    compadd status tail
   elif (( CURRENT > 3 )); then
     _call_function ret _maglica-$words[2]-$words[3] || _message 'no more arguments'
   fi

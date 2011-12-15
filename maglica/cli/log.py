@@ -32,7 +32,10 @@ def _print(row):
         for key in args["args"].keys():
             options.append("--%s=%s" % (key, args["args"][key]))
         options = " ".join(options)
-        print "Running %s %s %s on %s" % ( args["type"], args["action"], options, args["host"])
+        log = "Running %s %s %s" % ( args["type"], args["action"], options)
+        if args.has_key("host"):
+            log = "%s on %s" % ( log, args["host"] )
+        print log
     elif status == 1:
         cprint("Completed", "green")
     elif status == 2:

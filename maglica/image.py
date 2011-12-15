@@ -28,6 +28,8 @@ def copy(args):
     maglica.dispatcher.dispatch({
         "type"   : "image",
         "action" : "copy",
-        "name"   : args["name"],
-        "dest"   : args["dest"],
+        "args" : {
+            "name"   : args["name"],
+            "dest"   : args["dest"],
+        }
     })

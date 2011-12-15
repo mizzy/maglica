@@ -48,7 +48,7 @@ def main():
             args["request_id"] = request_log.insert_request(args)    
             publisher.send_multipart([
                 'copy',
-                json.dumps(args),
+                json.dumps(args["args"]),
             ])
             replier.send("request id: %d, sent image copy requst to copy worker" % args["request_id"])
         elif args.has_key("status"):

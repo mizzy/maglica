@@ -64,10 +64,12 @@ _maglica() {
 (( $+functions[_maglica-vm-clone] )) || _maglica-vm-clone() {
   local -a images
   images=($(_call_program images maglica_zsh_completion images))
+  hosts=($(_call_program hosts maglica_zsh_completion hosts))
 
   _arguments : \
     '--image=[Image Name]:Image Name:($images)' \
     '--hostname=[VM Host Name]:VM Host Name' \
+    '--on=[(Optional)Target Host Machine Name]:(Optional):($hosts)' \
     '--start=[(Optional)Start or not after vm created]:(Optional)Start or not after vm created:(0 1)' \
     '--format=[(Optional)Clone VM as another format]:(Optional)Clone VM as another format:(vmdk)' \
     ':::'
@@ -94,9 +96,11 @@ _maglica() {
 (( $+functions[_maglica-vm-remove] )) || _maglica-vm-remove() {
   local -a vms
   vms=($(_call_program vms maglica_zsh_completion vms))
+  hosts=($(_call_program hosts maglica_zsh_completion hosts))
 
   _arguments : \
     '--name=[Vm Name]:VM Name:($vms)' \
+    '--on=[(Optional)Target Host Machine Name]:(Optional):($hosts)' \
     ':::'
 }
 

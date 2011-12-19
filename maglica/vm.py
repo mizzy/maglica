@@ -20,7 +20,7 @@ def info(args):
 def clone(args): 
     options = {
         "mandatory": ["image", "hostname"],
-        "optional" : ["start", "format"],
+        "optional" : ["on", "start", "format"],
     }
     check_args(args, options)
 
@@ -33,11 +33,16 @@ def clone(args):
 
     if len(hosts) < 1:
         raise Exception('Image "%s" is active or not exist.' % args["image"])
-    
+
+    if args.has_key("on"):
+        host = args["on"]
+    else:
+        host = hosts[random.randint(0, len(hosts) - 1)]
+
     maglica.dispatcher.dispatch({
         "type"   : "vm",
         "action" : "clone",
-        "host"   : hosts[random.randint(0, len(hosts) - 1)],
+        "host"   : host,
         "args"   : args,
     })
 
@@ -78,7 +83,7 @@ def destroy(args):
 def remove(args):
     options = {
         "mandatory": ["name"],
-        "optional" : [],
+        "optional" : ["on"],
     }
     check_args(args, options)
     name = args["name"]
@@ -93,9 +98,13 @@ def remove(args):
         else:
             raise Exception("Domain not found.")
 
+    host = dom["host"]
+    if args.has_key("on"):
+        host = args["on"]
+
     maglica.dispatcher.dispatch({
         "type"   : "vm",
-        "host"   : dom["host"],
+        "host"   : host,
         "action" : "remove",
         "args"   : args,
     })

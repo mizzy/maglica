@@ -60,8 +60,9 @@ def get_object_type(args):
     return None
 
 def get_object_actions(object_type):
+    excludes = ['maglica', 're', '_print', 'cprint', 'json']
     actions = filter(
-        lambda x: not re.match(r"^__", x) and x != 'maglica' and x != 're',
+        lambda x: not re.match(r"^__", x) and x not in excludes,
         eval("dir(maglica.cli." + object_type + ")")
     )
     return actions

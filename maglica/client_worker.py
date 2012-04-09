@@ -45,12 +45,12 @@ def main():
             ))
 
         elif args.has_key("type") and args["type"] == "image" and args["action"] == "copy": 
-            args["request_id"] = request_log.insert_request(args)    
+            args["args"]["request_id"] = request_log.insert_request(args)
             publisher.send_multipart([
                 'copy',
                 json.dumps(args["args"]),
             ])
-            replier.send("request id: %d, sent image copy requst to copy worker" % args["request_id"])
+            replier.send("request id: %d, sent image copy requst to copy worker" % args["args"]["request_id"])
         elif args.has_key("status"):
             request_log.update_status(args["request_id"], args["status"], args["message"])
             replier.send('')

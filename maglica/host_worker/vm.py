@@ -94,6 +94,11 @@ HOSTNAME=%s
         g.write_file('/etc/sysconfig/network-scripts/ifcfg-eth0', ifcfg0, 0)
         g.write_file('/etc/sysconfig/network', network, 0)
         g.write_file('/etc/udev/rules.d/70-persistent-net.rules', '', 0)
+
+        if g.exists('/etc/sysconfig/network-scripts/ifcfg-eth1'):
+            ifcfg1 = ifcfg % ('eth1', re.sub(r"\.pb$", ".pblan", hostname))
+            g.write_file('/etc/sysconfig/network-scripts/ifcfg-eth1', ifcfg1, 0)
+
     elif ostype == 'debian':
         g.write_file('/etc/hosts', '127.0.0.1    localhost', 0)
         g.write_file('/etc/hostname', hostname, 0)

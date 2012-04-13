@@ -104,6 +104,17 @@ HOSTNAME=%s
         g.write_file('/etc/hostname', hostname, 0)
         g.write_file('/etc/udev/rules.d/70-persistent-net.rules', '', 0)
 
+        interface ='''
+interface "%s" {
+  send host-name "%s";
+}
+'''
+        eth0 = interface % ('eth0', hostname)
+        eth1 = interface % ('eth1', re.sub(r"\.pb$", ".pblan", hostname))
+
+        conf = g.read_file('/etc/dhcp/dhclient.conf')
+        g.write_file('/etc/dhcp/dhclient.conf', conf + eth0 + eth1, 0)
+
     shadow = g.read_file("/etc/shadow")
     g.write_file("/etc/shadow", re.sub(r"^root:[^:]+:", "root:$1$ZJsvbRbB$dWzQZuu8dDFR8wr6PTPjp0:", shadow), 0)
 

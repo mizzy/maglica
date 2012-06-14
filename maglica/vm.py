@@ -18,6 +18,8 @@ def info(args):
     return virt.info(args["name"]);
     
 def clone(args): 
+    virt = Virt(hosts())
+
     options = {
         "mandatory": ["image", "hostname"],
         "optional" : ["on", "start", "format"],
@@ -25,19 +27,24 @@ def clone(args):
     check_args(args, options)
 
     images = maglica.image.list()
-    hosts = []
+    target_hosts = []
 
     for image in images:
         if args["image"] == image["name"]:
-            hosts.append(image["host"])
+            target_hosts.append(image["host"])
 
-    if len(hosts) < 1:
+    if len(target_hosts) < 1:
         raise Exception('Image "%s" is active or not exist.' % args["image"])
 
     if args.has_key("on"):
         host = args["on"]
     else:
-        host = hosts[random.randint(0, len(hosts) - 1)]
+        min = 65535
+        for target_host in target_hosts:
+            size = len(virt.get_active_domains_of(target_host))
+            if size < min:
+                min = size
+                host = target_host
 
     maglica.dispatcher.dispatch({
         "type"   : "vm",

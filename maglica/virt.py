@@ -30,6 +30,14 @@ class Virt:
             
         return vms
 
+    def get_active_domains_of(self, host):
+        domains = self.get_active_domains()
+        vms = []
+        for domain in domains:
+            if domain["host"] == host:
+                vms.append(domain)
+        return vms
+
     def get_inactive_domains(self):
         vms = []
         for host in self.hosts:

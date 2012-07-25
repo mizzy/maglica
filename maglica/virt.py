@@ -4,16 +4,19 @@ from xml.etree.ElementTree import *
 import subprocess
 
 class Virt:
-    def __init__(self, hosts=["test"]):
+    def __init__(self, hosts=[{ "name": "test", "weight": 1 }]):
         self.hosts = []
         self.conf  = {}
         for host in hosts:
-            if host == "test":
+            if host["name"] == "test":
                 uri = "test:///default"
             else:
-                uri = self.uri(host)
+                uri = self.uri(host["name"])
             conn = libvirt.open(uri)
-            self.hosts.append({"name": host, "conn": conn})
+            weight = 1
+            if "weight" in host:
+                weight = host["weight"]
+            self.hosts.append({"name": host["name"], "conn": conn, "weight": host["weight"]})
 
     def get_active_domains(self):
         vms = []

@@ -8,7 +8,10 @@ import maglica.vm
 
 if __name__ == '__main__':
    if sys.argv[1] == 'hosts':
-      print " ".join(maglica.config.load().hosts)
+      hosts = []
+      for host in maglica.config.load().hosts:
+         hosts.append(host["name"])
+      print " ".join(hosts)
    if sys.argv[1] == 'images':
       images = []
       for image in maglica.image.list():

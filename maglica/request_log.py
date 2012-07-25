@@ -36,6 +36,8 @@ class RequestLog():
         self.con.row_factory = sqlite3.Row
 
     def insert_request(self, args):
+        if "host" in args and "name" in args["host"]:
+            args["host"] = args["host"]["name"]
         args = json.dumps(args)
         sql = """
         insert into requests ( args, create_on, modify_on, status ) values ( ?, ?, ?, ? )

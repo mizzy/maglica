@@ -4,3 +4,4 @@ etc/maglica.conf
 Maglica.egg-info/
 build/
 dist/
+.AppleDouble

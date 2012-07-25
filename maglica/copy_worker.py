@@ -54,6 +54,7 @@ def main():
         config = maglica.config.load()
         for host in config.hosts:
             domain = None
+            host = host["name"]
             conn = libvirt.open('remote://' + host)
             try:
                 domain = conn.lookupByName(name)

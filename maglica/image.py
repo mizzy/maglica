@@ -10,7 +10,7 @@ def list():
     config = maglica.config.load()
     images = []
     for host in config.hosts:
-        conn = libvirt.open('remote://' + host)
+        conn = libvirt.open('remote://' + host["name"])
         domains = conn.listDefinedDomains()
         for domain in domains:
             images.append({

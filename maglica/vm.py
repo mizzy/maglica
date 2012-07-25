@@ -41,10 +41,10 @@ def clone(args):
     else:
         min = 65535
         for target_host in target_hosts:
-            size = len(virt.get_active_domains_of(target_host))
+            size = len(virt.get_active_domains_of(target_host["name"])) * 10 / target_host["weight"]
             if size < min:
                 min = size
-                host = target_host
+                host = target_host["name"]
 
     maglica.dispatcher.dispatch({
         "type"   : "vm",

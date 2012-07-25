@@ -1,7 +1,7 @@
 # $ nosetests -v --rednose --with-coverage tests/util.py
 
 from nose.tools import *
-import maglica.util
+from maglica.util import *
 
 def check_args_ok_test():
     args = {
@@ -12,9 +12,9 @@ def check_args_ok_test():
         "mandatory" : ["image", "hostname"],
         "optional"  : [],
     }
-    ok_(maglica.util.check_args(args, options))
+    ok_(check_args(args, options))
     
-@raises(TypeError)
+@raises(MaglicaCliException)
 def check_args_except_test():
     args = {
         "hostname": "foo",
@@ -23,5 +23,5 @@ def check_args_except_test():
         "mandatory" : ["image", "hostname"],
         "optional"  : [],
     }
-    maglica.util.check_args(args, options)
+    check_args(args, options)
     

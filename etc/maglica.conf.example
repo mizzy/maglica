@@ -1,6 +1,8 @@
 hosts:
-  - host0.example.com
-  - host1.example.com
+  - name: host0.example.com
+    weight: 10
+  - name: host1.example.com
+    weight: 5
 client:
   host: client.example.com
   pub_port: 5555

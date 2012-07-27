@@ -4,13 +4,15 @@ import re
 from xml.etree.ElementTree import *
 import maglica.dispatcher
 from maglica.util import check_args
+import maglica.virt
 
 # Listing up inactive images
 def list():
     config = maglica.config.load()
     images = []
     for host in config.hosts:
-        conn = libvirt.open('remote://' + host["name"])
+        virt = maglica.virt.Virt()
+        conn = libvirt.open(virt.uri(host["name"]))
         domains = conn.listDefinedDomains()
         for domain in domains:
             images.append({

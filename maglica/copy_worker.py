@@ -5,6 +5,7 @@ import logging
 import libvirt
 import subprocess 
 from xml.etree.ElementTree import *
+import maglica.virt
 
 def main():
     context = zmq.Context()
@@ -27,6 +28,8 @@ def main():
 
     logging.info("copy worker started.")
 
+    virt = maglica.virt.Virt()
+
     while True:
         [address, args] = subscriber.recv_multipart()
         args = json.loads(args)
@@ -34,7 +37,7 @@ def main():
         name = args["name"]
         dest = args["dest"]
 
-        conn = libvirt.open('remote://' + dest)
+        conn = libvirt.open(virt.uri(dest))
         domain_found = 1
         try:
             conn.lookupByName(name)
@@ -55,7 +58,7 @@ def main():
         for host in config.hosts:
             domain = None
             host = host["name"]
-            conn = libvirt.open('remote://' + host)
+            conn = libvirt.open(virt.uri(host))
             try:
                 domain = conn.lookupByName(name)
             except:
@@ -91,7 +94,7 @@ def main():
                 proc = subprocess.Popen(cmdline1, stdout=subprocess.PIPE)
                 subprocess.call(cmdline2, stdin=proc.stdout)
 
-        conn = libvirt.open('remote://' + dest)
+        conn = libvirt.open(virt.uri(dest))
         conn.defineXML(xml)        
 
         message = "Done copying %s from %s to %s" % ( file, src, dest )

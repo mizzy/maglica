@@ -65,6 +65,7 @@ def clone(args):
 
     roots       = g.inspect_os()
     mountpoints = g.inspect_get_mountpoints(roots[0])
+    mountpoints.sort()
 
     for mountpoint in mountpoints:
         g.mount(mountpoint[1], mountpoint[0])

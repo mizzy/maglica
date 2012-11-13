@@ -6,6 +6,7 @@ import libvirt
 import subprocess 
 from xml.etree.ElementTree import *
 import maglica.virt
+import time
 
 def main():
     context = zmq.Context()
@@ -50,8 +51,8 @@ def main():
                 "status"     : 2,
                 "request_id" : args["request_id"],
                 }))
-            res = requestor.recv()
-            break
+            requestor.recv()
+            continue
         
         src = None
         config = maglica.config.load()
@@ -69,35 +70,28 @@ def main():
                 break
 
         if not src:
-            requestor.send( json.dumps({ "message" : "%s not found on any hosts." % name }) )
-            logging.info(requestor.recv())
+            requestor.send( json.dumps({
+                "message"    : "%s not found on any hosts." % name,
+                "status"     : 2,
+                "request_id" : args["request_id"],
+                }))
+            requestor.recv()
             continue
 
-        desc = fromstring(xml)
-        for disk in desc.findall(".//disk"):
-            if disk.get("device") == "disk":
-                file = disk.find(".//source").get("file")
-                cmdline1 = [
-                    'ssh',
-                    src,
-                    'dd',
-                    'if=' + file,
-                ]
-                cmdline2 = [
-                    'ssh',
-                    dest,
-                    'dd',
-                    'of=' + file,
-                ]
-
-                logging.info( "copying %s from %s to %s" % ( file, src, dest ) )
-                proc = subprocess.Popen(cmdline1, stdout=subprocess.PIPE)
-                subprocess.call(cmdline2, stdin=proc.stdout)
+        res = copy_image(xml, src, dest)
+        if res:
+            requestor.send( json.dumps({
+                "message"    : res,
+                "status"     : 2,
+                "request_id" : args["request_id"],
+                }))
+            requestor.recv()
+            continue
 
         conn = libvirt.open(virt.uri(dest))
         conn.defineXML(xml)        
 
-        message = "Done copying %s from %s to %s" % ( file, src, dest )
+        message = "Done copying %s from %s to %s" % ( name, src, dest )
         logging.info(message)
         requestor.send(json.dumps({
             "message"    : message,
@@ -111,3 +105,40 @@ def main():
     requestor.close()
     subscriber.close()
     context.term()
+
+def copy_image(xml, src, dest):
+    desc = fromstring(xml)
+    for disk in desc.findall(".//disk"):
+        if disk.get("device") == "disk":
+            file = disk.find(".//source").get("file")
+            for port in range(10000, 10100):
+                cmdline1 = [
+                    'ssh',
+                    src,
+                    'nc',
+                    '-l',
+                    str(port),
+                    '<',
+                    file,
+                    ]
+                proc = subprocess.Popen(cmdline1)
+                time.sleep(1)
+                if proc.poll() == None:
+                    break
+
+            if proc.poll() == 1:
+                return "Could not copy image.Pleasae contact to mizzy."
+
+            cmdline2 = [
+                'ssh',
+                dest,
+                'nc',
+                src,
+                str(port),
+                '>',
+                file,
+            ]
+
+            logging.info( "copying %s from %s to %s" % ( file, src, dest ) )
+            subprocess.call(cmdline2, stdin=subprocess.PIPE)
+

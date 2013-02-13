@@ -71,9 +71,9 @@ def clone(args):
         g.mount(mountpoint[1], mountpoint[0])
 
     ostype = None
-    if g.is_file('/etc/redhat-release'):
+    if g.exists('/etc/redhat-release'):
         ostype = 'redhat'
-    elif g.is_file('/etc/debian_version'):
+    elif g.exists('/etc/debian_version'):
         ostype = 'debian'
 
     ### TODO: OS 毎に別モジュールにする

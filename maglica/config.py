@@ -2,6 +2,7 @@ import os
 import sys
 import yaml
 
+
 class Config(dict):
 
     def __getitem__(self, key):
@@ -31,9 +32,10 @@ def load(filename=None):
 
     if not os.path.exists(config_file):
         config_file = '/etc/maglica.conf'
-        
+
     config = yaml.load(file(config_file))
     return load_from_dict(config)
+
 
 def load_from_dict(dict):
     if dict is None:

@@ -7,18 +7,18 @@ import maglica.image
 import maglica.vm
 
 if __name__ == '__main__':
-   if sys.argv[1] == 'hosts':
-      hosts = []
-      for host in maglica.config.load().hosts:
-         hosts.append(host["name"])
-      print " ".join(hosts)
-   if sys.argv[1] == 'images':
-      images = []
-      for image in maglica.image.list():
-         images.append(image["name"])
-      print " ".join(images)
-   if sys.argv[1] == 'vms':
-      vms = []
-      for vm in maglica.vm.list():
-         vms.append(vm["name"])
-      print " ".join(vms)
+    if sys.argv[1] == 'hosts':
+        hosts = []
+        for host in maglica.config.load().hosts:
+            hosts.append(host["name"])
+        print " ".join(hosts)
+    if sys.argv[1] == 'images':
+        images = []
+        for image in maglica.image.list():
+            images.append(image["name"])
+        print " ".join(images)
+    if sys.argv[1] == 'vms':
+        vms = []
+        for vm in maglica.vm.list():
+            vms.append(vm["name"])
+        print " ".join(vms)

@@ -12,7 +12,7 @@ context = zmq.Context()
 requestor = context.socket(zmq.REQ)
 requestor.connect(str("tcp://" + cfg.client["host"] + ":" + str(rep_port)))
 
-def dispatch(args):
-    requestor.send( json.dumps(args) )
-    logging.info(requestor.recv())
 
+def dispatch(args):
+    requestor.send(json.dumps(args))
+    logging.info(requestor.recv())

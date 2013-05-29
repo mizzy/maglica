@@ -3,11 +3,13 @@ import sqlite3
 import datetime
 import json
 
+
 class RequestLog():
+
     def __init__(self):
-        db_dir  = "/var/lib/maglica"
+        db_dir = "/var/lib/maglica"
         db_file = db_dir + "/maglica.db"
-        
+
         con = None
         if not os.path.exists(db_file):
             try:
@@ -44,23 +46,23 @@ class RequestLog():
         """
 
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%m:%S')
-        self.cur.execute(sql, [ args, now, now, 0 ])
+        self.cur.execute(sql, [args, now, now, 0])
         self.con.commit()
-        
+
         return self.cur.lastrowid
-    
+
     def update_status(self, request_id, status, message):
         sql = """
         update requests set status = ?, message = ? where id = ?
         """
-        self.cur.execute(sql, [ status, message, request_id ])
+        self.cur.execute(sql, [status, message, request_id])
         self.con.commit()
-        
+
     def get_status(self, request_id):
         sql = "select * from requests where id = ?"
-        row = self.con.execute(sql, [ request_id ]).fetchone()
+        row = self.con.execute(sql, [request_id]).fetchone()
         return row
-    
+
     def tail(self):
         sql = "select * from requests order by id desc limit 10"
         row = self.con.execute(sql).fetchall()

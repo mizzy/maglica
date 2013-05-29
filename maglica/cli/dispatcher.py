@@ -12,20 +12,21 @@ OBJECT_TYPES = filter(
     dir(maglica.cli)
 )
 
+
 def run_command(args):
-    type  = args.pop(0)
+    type = args.pop(0)
     action = args.pop(0)
     cmd = eval("maglica.cli." + type + "." + action)
-    
+
     if len(args) > 0:
         options = {}
         for arg in args:
             try:
-                ( key, value ) = arg.split('=')
+                (key, value) = arg.split('=')
             except ValueError:
-                key   = arg
+                key = arg
                 value = True
-                
+
             key = key.replace('--', '')
             options[key] = value
         try:
@@ -39,15 +40,17 @@ def run_command(args):
         except MaglicaCliException, options:
             print_options(type, action, options)
 
+
 def print_options(type, action, options):
     mandatory = " ".join(["--%s=..." % x for x in options[0]["mandatory"]])
-    optional  = " ".join(["--%s=..." % x for x in options[0]["optional"]])
+    optional = " ".join(["--%s=..." % x for x in options[0]["optional"]])
     if optional:
         optional = "[%s]" % optional
 
     print "usage\n====="
     action = action.replace('_', '-')
-    print "maglica %s %s %s %s" % ( type, action, mandatory, optional )
+    print "maglica %s %s %s %s" % (type, action, mandatory, optional)
+
 
 def get_object_type(args):
     """
@@ -59,6 +62,7 @@ def get_object_type(args):
         return args[0]
     return None
 
+
 def get_object_actions(object_type):
     excludes = ['maglica', 're', '_print', 'cprint', 'json']
     actions = filter(
@@ -66,7 +70,8 @@ def get_object_actions(object_type):
         eval("dir(maglica.cli." + object_type + ")")
     )
     return actions
-    
+
+
 def get_object_action(object_type, args):
     actions = get_object_actions(object_type)
     if len(args) < 2:
@@ -74,6 +79,7 @@ def get_object_action(object_type, args):
     elif args[1] in actions:
         return args[1]
     return None
+
 
 def print_help():
     """
@@ -83,20 +89,22 @@ def print_help():
     print "maglica <" + ('|').join(OBJECT_TYPES) + "> ..."
     exit(1)
 
+
 def print_object_help(object_type):
     actions = get_object_actions(object_type)
     print "usage"
     print "====="
     for action in actions:
         action = action.replace('_', '-')
-        print "maglica %s %s" % ( object_type, action) 
+        print "maglica %s %s" % (object_type, action)
     exit(1)
+
 
 def main():
     args = sys.argv[1:]
     if len(args) > 1:
         args[1] = args[1].replace('-', '_')
-    object_type   = get_object_type(args)
+    object_type = get_object_type(args)
 
     if len(sys.argv) < 2 or sys.argv[1] == "--help" or not object_type:
         print_help()

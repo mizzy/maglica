@@ -3,6 +3,7 @@
 from nose.tools import *
 import maglica.config
 
+
 def test_config_load():
     config = maglica.config.load('etc/maglica.conf.example')
     eq_(config.hosts[0], "host0.example.com")
@@ -13,4 +14,3 @@ def test_config_load():
 
 if __name__ == "__main__":
     test_config_load()
-

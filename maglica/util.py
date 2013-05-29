@@ -4,5 +4,6 @@ def check_args(args, options):
             raise MaglicaCliException, options
     return True
 
+
 class MaglicaCliException(Exception):
     pass

@@ -7,6 +7,8 @@ from maglica.util import check_args
 import maglica.virt
 
 # Listing up inactive images
+
+
 def list():
     config = maglica.config.load()
     images = []
@@ -16,22 +18,23 @@ def list():
         domains = conn.listDefinedDomains()
         for domain in domains:
             images.append({
-                "name" : domain,
-                "host" : host,
-                })
+                "name": domain,
+                "host": host,
+            })
     return images
+
 
 def copy(args):
     options = {
         "mandatory": ["name", "dest"],
-        "optional" : [],
+        "optional": [],
     }
     check_args(args, options)
     maglica.dispatcher.dispatch({
-        "type"   : "image",
-        "action" : "copy",
-        "args" : {
-            "name"   : args["name"],
-            "dest"   : args["dest"],
+        "type": "image",
+        "action": "copy",
+        "args": {
+            "name": args["name"],
+            "dest": args["dest"],
         }
     })

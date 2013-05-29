@@ -1,7 +1,7 @@
 # $ nosetests -v --rednose --with-coverage tests/virt.py
 
 from nose.tools import *
-from maglica.virt import Virt 
+from maglica.virt import Virt
 import maglica.config
 
 xml = '''
@@ -23,12 +23,14 @@ xml = '''
 </domain>
 '''
 
+
 def test_get_active_domains():
     virt = Virt()
     dom = virt.get_active_domains()[0]
     eq_(dom["name"], "test")
     eq_(dom["host"], "test")
     eq_(dom["state"], "running")
+
 
 def test_get_inactive_domains():
     virt = Virt()
@@ -38,12 +40,14 @@ def test_get_inactive_domains():
     eq_(dom["host"], "test")
     eq_(dom["state"], "shut off")
 
+
 def test_get_active_domain():
     virt = Virt()
     (dom, host) = virt.get_active_domain("test")
     eq_(host, "test")
     eq_(dom.name(), "test")
     ok_(dom.isActive())
+
 
 def test_get_inactive_domain():
     virt = Virt()
@@ -53,6 +57,7 @@ def test_get_inactive_domain():
     eq_(dom["host"], "test")
     eq_(dom["state"], "shut off")
 
+
 def test_get_domains():
     virt = Virt()
     virt.hosts[0]["conn"].defineXML(xml)
@@ -61,15 +66,18 @@ def test_get_domains():
     eq_(domains[0]["name"], "test")
     eq_(domains[1]["name"], "test2")
 
+
 def test_start_and_stop():
     virt = Virt()
     eq_(virt.stop("test"), 0)
     eq_(virt.start("test"), 0)
 
+
 @raises(Exception)
 def test_already_started_exception():
     virt = Virt()
     virt.start("test")
+
 
 @raises(Exception)
 def test_start_not_exist_exception():
@@ -83,39 +91,46 @@ def test_already_stopped_exception():
     virt.stop("test")
     virt.stop("test")
 
+
 @raises(Exception)
 def test_stop_not_exist_exception():
     virt = Virt()
     virt.stop("not_exist")
 
+
 def test_attach_iso_to_active_domain():
     virt = Virt()
     ok_(virt.attach_iso("test", "test.iso"))
+
 
 def test_set_boot_device():
     virt = Virt()
     ok_(virt.attach_iso("test", "cdrom"))
 
+
 def test_set_vcpus():
     virt = Virt()
     ok_(virt.set_vcpus("test", "1"))
 
+
 def test_set_memory():
     virt = Virt()
-    ok_(virt.set_memory("test", 1024*1024))
-    
+    ok_(virt.set_memory("test", 1024 * 1024))
+
+
 def test_uri_default():
     virt = Virt()
     eq_(virt.uri("host0.example.jp"), "remote://host0.example.jp/")
+
 
 def test_uri_qemu():
     virt = Virt()
 
     conf = maglica.config.load_from_dict({
         "libvirt": {
-            "driver"    : "qemu",
-            "transport" : "tcp",
-            "path"      : "system",
+            "driver": "qemu",
+            "transport": "tcp",
+            "path": "system",
         }
     })
 

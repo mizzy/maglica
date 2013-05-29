@@ -10,8 +10,9 @@ import logging
 import os
 import time
 
+
 def clone(args):
-    image    = args["image"]
+    image = args["image"]
     hostname = args["hostname"]
 
     format = None
@@ -19,7 +20,7 @@ def clone(args):
         format = args["format"]
 
     conn = libvirt.open(None)
-    dom  = conn.lookupByName(image)
+    dom = conn.lookupByName(image)
     desc = fromstring(dom.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
 
     sources = []
@@ -49,21 +50,22 @@ def clone(args):
         cmdline.append("-f")
         cmdline.append(path)
 
-    proc = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(
+        cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = proc.communicate()
 
     message = None
-    status  = 1
+    status = 1
     if proc.returncode:
         status = 2
         message = stderr
-        
+
     g = guestfs.GuestFS()
     for path in target_paths:
         g.add_drive(path)
     g.launch()
 
-    roots       = g.inspect_os()
+    roots = g.inspect_os()
     mountpoints = g.inspect_get_mountpoints(roots[0])
     mountpoints.sort()
 
@@ -76,21 +78,21 @@ def clone(args):
     elif g.exists('/etc/debian_version'):
         ostype = 'debian'
 
-    ### TODO: OS 毎に別モジュールにする
+    # TODO: OS 毎に別モジュールにする
     if ostype == 'redhat':
-        ifcfg='''DEVICE=%s
+        ifcfg = '''DEVICE=%s
 BOOTPROTO=dhcp
 ONBOOT=yes
 TYPE="Ethernet"
 DHCP_HOSTNAME=%s
 '''
 
-        network='''NETWORKING=yes
+        network = '''NETWORKING=yes
 HOSTNAME=%s
 '''
 
-        ifcfg0  = ifcfg % ('eth0', hostname)
-        network = network % ( hostname )
+        ifcfg0 = ifcfg % ('eth0', hostname)
+        network = network % (hostname)
 
         g.write_file('/etc/sysconfig/network-scripts/ifcfg-eth0', ifcfg0, 0)
         g.write_file('/etc/sysconfig/network', network, 0)
@@ -98,14 +100,15 @@ HOSTNAME=%s
 
         if g.exists('/etc/sysconfig/network-scripts/ifcfg-eth1'):
             ifcfg1 = ifcfg % ('eth1', re.sub(r"\.pb$", ".pblan", hostname))
-            g.write_file('/etc/sysconfig/network-scripts/ifcfg-eth1', ifcfg1, 0)
+            g.write_file(
+                '/etc/sysconfig/network-scripts/ifcfg-eth1', ifcfg1, 0)
 
     elif ostype == 'debian':
         g.write_file('/etc/hosts', '127.0.0.1    localhost', 0)
         g.write_file('/etc/hostname', hostname, 0)
         g.write_file('/etc/udev/rules.d/70-persistent-net.rules', '', 0)
 
-        interface ='''
+        interface = '''
 interface "%s" {
   send host-name "%s";
 }
@@ -117,11 +120,13 @@ interface "%s" {
         g.write_file('/etc/dhcp/dhclient.conf', conf + eth0 + eth1, 0)
 
     shadow = g.read_file("/etc/shadow")
-    g.write_file("/etc/shadow", re.sub(r"^root:[^:]+:", "root:$1$ZJsvbRbB$dWzQZuu8dDFR8wr6PTPjp0:", shadow), 0)
+    g.write_file("/etc/shadow", re.sub(
+        r"^root:[^:]+:", "root:$1$ZJsvbRbB$dWzQZuu8dDFR8wr6PTPjp0:", shadow), 0)
 
     if format == "vmdk":
         grub = g.read_file("/boot/grub/grub.conf")
-        g.write_file("/boot/grub/grub.conf", re.sub(r"console=[^\s]+", "", grub), 0)
+        g.write_file("/boot/grub/grub.conf", re.sub(
+            r"console=[^\s]+", "", grub), 0)
 
     g.sync()
     g.umount_all()
@@ -141,31 +146,34 @@ interface "%s" {
             "vmdk",
             target_paths[0],
             vmdk_path,
-            ]
+        ]
 
-        proc = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+            cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
 
         if proc.returncode:
             status = 2
             message = stderr
         else:
-            message = "Get vmdk file from http://%s/maglica/%s.vmdk" % ( socket.gethostname(), hostname )
+            message = "Get vmdk file from http://%s/maglica/%s.vmdk" % (
+                socket.gethostname(), hostname)
 
         remove({"name": hostname})
 
     if status == 1 and not message:
-        message = "%s was cloned from %s on %s successfully"  % ( hostname, image, socket.gethostname() )
+        message = "%s was cloned from %s on %s successfully" % (
+            hostname, image, socket.gethostname())
 
     return {
         "message": message,
-        "status" : status,
+        "status": status,
     }
 
 
 def remove(args):
     conn = libvirt.open(None)
-    dom  = conn.lookupByName(args["name"])
+    dom = conn.lookupByName(args["name"])
     desc = fromstring(dom.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
 
     for disk in desc.findall(".//disk"):
@@ -176,9 +184,10 @@ def remove(args):
     dom.undefine()
 
     return {
-        "message" : "%s removed successfully" % args["name"],
-        "status"  : 1,
+        "message": "%s removed successfully" % args["name"],
+        "status": 1,
     }
+
 
 def attach_disk(args):
     conn = libvirt.open(None)
@@ -197,7 +206,7 @@ def attach_disk(args):
     devs.sort()
     if len(devs) > 0:
         dev = devs[-1]
-        last_char = chr(ord(dev[-1])+1)
+        last_char = chr(ord(dev[-1]) + 1)
         dev = 'vd' + last_char
     else:
         dev = 'vda'
@@ -226,8 +235,8 @@ def attach_disk(args):
     conn.defineXML(tostring(desc))
 
     return {
-        "message" : "%s kbytes disk attached to %s as /dev/%s successfully" % ( size, name, dev ),
-        "status"  : 1,
+        "message": "%s kbytes disk attached to %s as /dev/%s successfully" % (size, name, dev),
+        "status": 1,
     }
 
 
@@ -246,6 +255,7 @@ def _select_most_free_dir(conn):
         current_free_size = free_size
 
     return most_free_dir
+
 
 def _create_raw_image(path, size):
     cmd = ['dd', 'if=/dev/zero', 'of=%s' % path, 'bs=1024', 'count=%d' % size]

@@ -3,10 +3,12 @@ import maglica.config
 from xml.etree.ElementTree import *
 import subprocess
 
+
 class Virt:
-    def __init__(self, hosts=[{ "name": "test", "weight": 1 }]):
+
+    def __init__(self, hosts=[{"name": "test", "weight": 1}]):
         self.hosts = []
-        self.conf  = {}
+        self.conf = {}
         for host in hosts:
             if host["name"] == "test":
                 uri = "test:///default"
@@ -16,21 +18,22 @@ class Virt:
             weight = 1
             if "weight" in host:
                 weight = host["weight"]
-            self.hosts.append({"name": host["name"], "conn": conn, "weight": host["weight"]})
+            self.hosts.append({"name": host[
+                              "name"], "conn": conn, "weight": host["weight"]})
 
     def get_active_domains(self):
         vms = []
         for host in self.hosts:
             conn = host["conn"]
-            ids  = conn.listDomainsID()
+            ids = conn.listDomainsID()
             for id in ids:
                 dom = conn.lookupByID(id)
                 vms.append({
-                    "name"  : dom.name(),
-                    "state" : "running",
-                    "host"  : host["name"],
+                    "name": dom.name(),
+                    "state": "running",
+                    "host": host["name"],
                 })
-            
+
         return vms
 
     def get_active_domains_of(self, host):
@@ -48,9 +51,9 @@ class Virt:
             domains = conn.listDefinedDomains()
             for domain in domains:
                 vms.append({
-                    "name"  : domain,
-                    "state" : "shut off",
-                    "host"  : host["name"],
+                    "name": domain,
+                    "state": "shut off",
+                    "host": host["name"],
                 })
 
         return vms
@@ -62,7 +65,7 @@ class Virt:
             for id in ids:
                 dom = conn.lookupByID(id)
                 if name == dom.name():
-                    return ( dom, host["name"] )
+                    return (dom, host["name"])
         return (None, None)
 
     def get_inactive_domain(self, name):
@@ -75,28 +78,28 @@ class Virt:
         domains = self.get_active_domains()
         for domain in self.get_inactive_domains():
             domains.append(domain)
-            
+
         return domains
 
     def start(self, name):
         dom = self.get_inactive_domain(name)
         if not dom:
             raise Exception("%s not found or already started." % name)
-        
+
         for host in self.hosts:
             if host["name"] == dom["host"]:
                 dom = host["conn"].lookupByName(name)
                 return dom.create()
 
     def stop(self, name):
-        ( dom, host ) = self.get_active_domain(name)
+        (dom, host) = self.get_active_domain(name)
         if not dom:
             raise Exception("%s not found or already stopped." % name)
 
         return dom.shutdown()
 
     def destroy(self, name):
-        ( dom, host ) = self.get_active_domain(name)
+        (dom, host) = self.get_active_domain(name)
         if not dom:
             raise Exception("%s not found or already stopped." % name)
 
@@ -105,14 +108,14 @@ class Virt:
     def attach_iso(self, name, iso):
         (dom, host) = self.get_active_domain(name)
         if not dom:
-            dom  = self.get_inactive_domain(name)
+            dom = self.get_inactive_domain(name)
             host = dom["host"]
 
         for x in self.hosts:
             if host == x["name"]:
                 conn = x["conn"]
 
-        dom  = conn.lookupByName(name)
+        dom = conn.lookupByName(name)
 
         cdrom = None
         desc = fromstring(dom.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
@@ -134,7 +137,7 @@ class Virt:
   <readonly/>
 </disk>
    """
-        xml = xml % ( iso )
+        xml = xml % (iso)
         desc.find(".//devices").insert(-1, fromstring(xml))
         conn.defineXML(tostring(desc))
         return True
@@ -142,14 +145,14 @@ class Virt:
     def set_boot_device(self, name, dev):
         (dom, host) = self.get_active_domain(name)
         if not dom:
-            dom  = self.get_inactive_domain(name)
+            dom = self.get_inactive_domain(name)
             host = dom["host"]
 
         for x in self.hosts:
             if host == x["name"]:
                 conn = x["conn"]
 
-        dom  = conn.lookupByName(name)
+        dom = conn.lookupByName(name)
 
         desc = fromstring(dom.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
         desc.find(".//boot").set("dev", dev)
@@ -160,14 +163,14 @@ class Virt:
     def set_vcpus(self, name, vcpus):
         (dom, host) = self.get_active_domain(name)
         if not dom:
-            dom  = self.get_inactive_domain(name)
+            dom = self.get_inactive_domain(name)
             host = dom["host"]
 
         for x in self.hosts:
             if host == x["name"]:
                 conn = x["conn"]
 
-        dom  = conn.lookupByName(name)
+        dom = conn.lookupByName(name)
 
         desc = fromstring(dom.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
         desc.find(".//vcpu").text = vcpus
@@ -181,14 +184,14 @@ class Virt:
     def set_memory(self, name, size):
         (dom, host) = self.get_active_domain(name)
         if not dom:
-            dom  = self.get_inactive_domain(name)
+            dom = self.get_inactive_domain(name)
             host = dom["host"]
 
         for x in self.hosts:
             if host == x["name"]:
                 conn = x["conn"]
 
-        dom  = conn.lookupByName(name)
+        dom = conn.lookupByName(name)
 
         desc = fromstring(dom.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE))
         desc.find(".//memory").text = str(size)
@@ -206,14 +209,15 @@ class Virt:
         p = subprocess.Popen(cmdline, stdout=subprocess.PIPE)
         out = p.stdout.readline().rstrip()
         return {
-            "name"   : name,
-            "host"   : host,
+            "name": name,
+            "host": host,
             "vncport": 5900 + int(out.replace(":", ""))
         }
 
     def console(self, name):
         (dom, host) = self.get_active_domain(name)
-        subprocess.call(["virsh", "--connect", self.uri(host), "console", name])
+        subprocess.call(["virsh", "--connect", self.uri(
+            host), "console", name])
 
     def uri(self, host):
         if not self.conf:

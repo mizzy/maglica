@@ -7,22 +7,24 @@ import sys
 from maglica.util import check_args
 from maglica.virt import Virt
 
+
 def info(args):
     options = {
         "mandatory": ["name"],
-        "optional" : [],
+        "optional": [],
     }
     check_args(args, options)
 
     virt = Virt(hosts())
-    return virt.info(args["name"]);
-    
-def clone(args): 
+    return virt.info(args["name"])
+
+
+def clone(args):
     virt = Virt(hosts())
 
     options = {
         "mandatory": ["image", "hostname"],
-        "optional" : ["on", "start", "format"],
+        "optional": ["on", "start", "format"],
     }
     check_args(args, options)
 
@@ -41,56 +43,62 @@ def clone(args):
     else:
         min = 65535
         for target_host in target_hosts:
-            size = len(virt.get_active_domains_of(target_host["name"])) * 10 / target_host["weight"]
+            size = len(virt.get_active_domains_of(
+                target_host["name"])) * 10 / target_host["weight"]
             if size < min:
                 min = size
                 host = target_host["name"]
 
     maglica.dispatcher.dispatch({
-        "type"   : "vm",
-        "action" : "clone",
-        "host"   : host,
-        "args"   : args,
+        "type": "vm",
+        "action": "clone",
+        "host": host,
+        "args": args,
     })
+
 
 def list():
     virt = Virt(hosts())
     return virt.get_domains()
 
+
 def start(args):
     options = {
         "mandatory": ["name"],
-        "optional" : [],
+        "optional": [],
     }
     check_args(args, options)
 
     virt = Virt(hosts())
     virt.start(args["name"])
 
+
 def stop(args):
     options = {
         "mandatory": ["name"],
-        "optional" : [],
+        "optional": [],
     }
     check_args(args, options)
 
     virt = Virt(hosts())
     virt.stop(args["name"])
 
+
 def destroy(args):
     options = {
         "mandatory": ["name"],
-        "optional" : [],
+        "optional": [],
     }
     check_args(args, options)
 
     virt = Virt(hosts())
     virt.destroy(args["name"])
 
+
 def remove(args):
     options = {
         "mandatory": ["name"],
-        "optional" : ["on"],
+        "optional": ["on"],
     }
     check_args(args, options)
     name = args["name"]
@@ -110,39 +118,42 @@ def remove(args):
         host = args["on"]
 
     maglica.dispatcher.dispatch({
-        "type"   : "vm",
-        "host"   : host,
-        "action" : "remove",
-        "args"   : args,
+        "type": "vm",
+        "host": host,
+        "action": "remove",
+        "args": args,
     })
+
 
 def attach_iso(args):
     options = {
         "mandatory": ["name", "iso"],
-        "optional" : [],
+        "optional": [],
     }
     check_args(args, options)
 
     name = args["name"]
-    iso  = args["iso"]
+    iso = args["iso"]
 
     virt = Virt(hosts())
     virt.attach_iso(name, iso)
 
+
 def set_boot_device(args):
     options = {
         "mandatory": ["name", "dev"],
-        "optional" : [],
+        "optional": [],
     }
     check_args(args, options)
-     
+
     virt = Virt(hosts())
     virt.set_boot_device(args["name"], args["dev"])
+
 
 def attach_disk(args):
     options = {
         "mandatory": ["name", "size"],
-        "optional" : [],
+        "optional": [],
     }
     check_args(args, options)
 
@@ -163,26 +174,28 @@ def attach_disk(args):
     virt = Virt(hosts())
     (dom, host) = virt.get_active_domain(name)
     maglica.dispatcher.dispatch({
-        "type"   : "vm",
-        "host"   : host,
-        "action" : "attach_disk",
-        "args"   : args,
+        "type": "vm",
+        "host": host,
+        "action": "attach_disk",
+        "args": args,
     })
+
 
 def set_vcpus(args):
     options = {
         "mandatory": ["name", "vcpus"],
-        "optional" : [],
+        "optional": [],
     }
     check_args(args, options)
 
     virt = Virt(hosts())
     virt.set_vcpus(args["name"], args["vcpus"])
 
+
 def set_memory(args):
     options = {
         "mandatory": ["name", "size"],
-        "optional" : [],
+        "optional": [],
     }
     check_args(args, options)
 
@@ -204,15 +217,17 @@ def set_memory(args):
     virt = Virt(hosts())
     virt.set_memory(name, size)
 
+
 def console(args):
     options = {
         "mandatory": ["name"],
-        "optional" : [],
+        "optional": [],
     }
     check_args(args, options)
 
     virt = Virt(hosts())
     virt.console(args["name"])
+
 
 def hosts():
     return maglica.config.load().hosts

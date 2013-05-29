@@ -3,10 +3,11 @@ import maglica.config
 import json
 import logging
 import libvirt
-import subprocess 
+import subprocess
 from xml.etree.ElementTree import *
 import maglica.virt
 import time
+
 
 def main():
     context = zmq.Context()
@@ -23,7 +24,7 @@ def main():
     subscriber = context.socket(zmq.SUB)
     subscriber.connect(str("tcp://" + config.client["host"] + ":" + pub_port))
     subscriber.setsockopt(zmq.SUBSCRIBE, 'copy')
-    
+
     requestor = context.socket(zmq.REQ)
     requestor.connect(str("tcp://" + config.client["host"] + ":" + rep_port))
 
@@ -47,13 +48,13 @@ def main():
 
         if domain_found:
             requestor.send(json.dumps({
-                "message"    : "%s already exsits on %s" % ( name, dest),
-                "status"     : 2,
-                "request_id" : args["request_id"],
-                }))
+                "message": "%s already exsits on %s" % (name, dest),
+                "status": 2,
+                "request_id": args["request_id"],
+            }))
             requestor.recv()
             continue
-        
+
         src = None
         config = maglica.config.load()
         for host in config.hosts:
@@ -70,33 +71,33 @@ def main():
                 break
 
         if not src:
-            requestor.send( json.dumps({
-                "message"    : "%s not found on any hosts." % name,
-                "status"     : 2,
-                "request_id" : args["request_id"],
-                }))
+            requestor.send(json.dumps({
+                "message": "%s not found on any hosts." % name,
+                "status": 2,
+                "request_id": args["request_id"],
+            }))
             requestor.recv()
             continue
 
         res = copy_image(xml, src, dest)
         if res:
-            requestor.send( json.dumps({
-                "message"    : res,
-                "status"     : 2,
-                "request_id" : args["request_id"],
-                }))
+            requestor.send(json.dumps({
+                "message": res,
+                "status": 2,
+                "request_id": args["request_id"],
+            }))
             requestor.recv()
             continue
 
         conn = libvirt.open(virt.uri(dest))
-        conn.defineXML(xml)        
+        conn.defineXML(xml)
 
-        message = "Done copying %s from %s to %s" % ( name, src, dest )
+        message = "Done copying %s from %s to %s" % (name, src, dest)
         logging.info(message)
         requestor.send(json.dumps({
-            "message"    : message,
-            "status"     : 1,
-            "request_id" : args["request_id"],
+            "message": message,
+            "status": 1,
+            "request_id": args["request_id"],
         }))
         res = requestor.recv()
         if res:
@@ -105,6 +106,7 @@ def main():
     requestor.close()
     subscriber.close()
     context.term()
+
 
 def copy_image(xml, src, dest):
     desc = fromstring(xml)
@@ -120,7 +122,7 @@ def copy_image(xml, src, dest):
                     str(port),
                     '<',
                     file,
-                    ]
+                ]
                 proc = subprocess.Popen(cmdline1)
                 time.sleep(1)
                 if proc.poll() == None:
@@ -139,6 +141,5 @@ def copy_image(xml, src, dest):
                 file,
             ]
 
-            logging.info( "copying %s from %s to %s" % ( file, src, dest ) )
+            logging.info("copying %s from %s to %s" % (file, src, dest))
             subprocess.call(cmdline2, stdin=subprocess.PIPE)
-

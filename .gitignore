@@ -1,7 +1,19 @@
-*.pyc
+### OSX
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+### Python
+*.py[cod]
+dist
+build
 etc/maglica.conf
 .#*
 Maglica.egg-info/
-build/
-dist/
-.AppleDouble

@@ -258,5 +258,5 @@ def _select_most_free_dir(conn):
 
 
 def _create_raw_image(path, size):
-    cmd = ['dd', 'if=/dev/zero', 'of=%s' % path, 'bs=1024', 'count=%d' % size]
+    cmd = ['qemu-img', 'create', '-f', 'raw', path, str(size * 1024)]
     proc = subprocess.call(cmd)
